@@ -4,12 +4,12 @@ from ._model.omega_pixiv_illusts import OmegaPixivIllusts
 from utils.message_builder import image, custom_forward_msg
 from utils.manager import withdraw_message_manager
 from services.log import logger
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message, GROUP_ADMIN, GROUP_OWNER
 from nonebot.params import CommandArg
 from ._data_source import get_image
 from ._model.pixiv import Pixiv
 from nonebot import on_command
-import random
+import random, httpx
 
 
 __zx_plugin_name__ = "PIX"
@@ -80,8 +80,22 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         nsfw_tag = 2
     else:
         nsfw_tag = 0
-    if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
-        await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+    if nsfw_tag != 0:
+        if isinstance(event, GroupMessageEvent):
+            flag = False
+            if await GROUP_ADMIN(bot, event):
+                flag = True
+            elif await GROUP_OWNER(bot, event):
+                flag = True
+            elif str(event.user_id) in bot.config.superusers:
+                flag = True
+            if not flag:
+                await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        elif str(event.user_id) not in bot.config.superusers:
+            await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+            
+    # if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
+    #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
     if n := len(x) == 1 and is_number(x[0]):
         num = int(x[-1])
         keyword = ""
@@ -147,7 +161,14 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         pid = img.pid
         title = img.title
         uid = img.uid
-        _img = await get_image(img_url, event.user_id)
+        try:
+            _img = await get_image(img_url, event.user_id)
+        except httpx.ConnectTimeout:
+            await pix.finish("超时了...", at_sender=True)
+        except httpx.RemoteProtocolError:
+            await pix.finish("服务器好像寄了...", at_sender=True)
+        except httpx.ReadTimeout:
+            await pix.finish("服务器好像寄了...", at_sender=True)
         if _img:
             if Config.get_config("pix", "SHOW_INFO"):
                 msg_list.append(
