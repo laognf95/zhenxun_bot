@@ -144,3 +144,12 @@ member_activity_handle.py
 Yu-Gi-Oh/
 csgo/
 fantasy_card/
+
+restart.sh
+yarn.lock
+zhenxun_bot_webui-main/
+backup/
+configs/
+data/
+node_modules/
+resources/
