@@ -47,4 +47,6 @@ async def get_saucenao_image(url: str) -> Union[str, List[str]]:
         if "source" not in info["data"].keys():
             tmp += f'source：{info["data"]["ext_urls"][0]}\n'
         msg_list.append(tmp[:-1])
+    if msg_list is None or len(msg_list) == 0:
+        return "Saucenao识图失败.."
     return msg_list

@@ -41,6 +41,7 @@ search_image = on_command("识图", block=True, priority=5)
 async def get_image_info(mod: str, url: str):
     if mod == "saucenao":
         return await get_saucenao_image(url)
+    return '识图失败..'
 
 
 def parse_image(key: str):
