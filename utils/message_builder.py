@@ -70,7 +70,7 @@ def record(voice_name: str, path: str = None) -> MessageSegment or str:
     if "http" in voice_name:
         return MessageSegment.record(voice_name)
     if file.exists():
-        result = MessageSegment.record(f"file:///{file.absolute()}")
+        result = MessageSegment.record(file.absolute())
         return result
     else:
         logger.warning(f"语音{file.absolute()}缺失...")
