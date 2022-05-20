@@ -63,7 +63,7 @@ async def _poke_event(event: PokeNotifyEvent):
             await poke_.finish(rst + random.choice(poke__reply), at_sender=True)
         rand = random.random()
         if rand <= 0.3:
-            path = random.choice(["luoli", "meitu"])
+            path = random.choice(["luoli"])
             index = random.randint(0, len(os.listdir(IMAGE_PATH / "image_management" / path)))
             result = f"id：{index}" + image(f"{index}.jpg", "image_management/" + path)
             await poke_.send(result)
