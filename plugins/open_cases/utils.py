@@ -20,6 +20,9 @@ url = "https://buff.163.com/api/market/goods"
 async def util_get_buff_price(case_name: str = "狂牙大行动") -> str:
     cookie = {"session": Config.get_config("open_cases", "COOKIE")}
     failed_list = []
+    case_name = case_name.strip()
+    if case_name[:6] == '更新开箱价格':
+        case_name = case_name[6:]
     case = cn2py(case_name)
     if case_name == "狂牙大行动":
         case_id = 1
@@ -31,8 +34,10 @@ async def util_get_buff_price(case_name: str = "狂牙大行动") -> str:
         case_id = 4
     elif case_name == "光谱":
         case_id = 5
+    elif case_name == '':
+        return "请指定一个武器箱"
     else:
-        return "未查询到武器箱"
+        return f"未查询到武器箱{case_name}"
     case = case.upper()
     CASE_KNIFE = eval(case + "_CASE_KNIFE")
     CASE_RED = eval(case + "_CASE_RED")
