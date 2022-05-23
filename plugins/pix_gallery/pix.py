@@ -3,6 +3,7 @@ from configs.config import Config
 from ._model.omega_pixiv_illusts import OmegaPixivIllusts
 from utils.message_builder import image, custom_forward_msg
 from utils.manager import withdraw_message_manager
+from utils.utils import change_pixiv_image_links
 from services.log import logger
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message, GROUP_ADMIN, GROUP_OWNER
 from nonebot.params import CommandArg
@@ -142,7 +143,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             if x.pid not in tmp_:
                 all_image.append(x)
                 tmp_.append(x.pid)
-    if not all_image:
+    if not all_image or len(all_image) == 0:
         await pix.finish(f"未在图库中找到与 {keyword} 相关Tag/UID/PID的图片...", at_sender=True)
     msg_list = []
     for _ in range(num):
@@ -171,11 +172,14 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             await pix.finish("服务器好像寄了...", at_sender=True)
         if _img:
             if Config.get_config("pix", "SHOW_INFO"):
+                o_url = change_pixiv_image_links(img_url, "original", Config.get_config("pixiv", "PIXIV_NGINX_URL"))
+                # print(o_url)
                 msg_list.append(
                     Message(
                         f"title：{title}\n"
                         f"author：{author}\n"
                         f"PID：{pid}\nUID：{uid}\n"
+                        f"原图链接:{o_url}"
                         f"{image(_img)}"
                     )
                 )
