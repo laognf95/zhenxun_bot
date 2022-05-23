@@ -31,7 +31,7 @@ class AsyncHttpx:
         cookies: Optional[Dict[str, str]] = None,
         use_proxy: bool = True,
         proxy: Dict[str, str] = None,
-        timeout: Optional[int] = 30,
+        timeout: Optional[int] = 60,
         **kwargs,
     ) -> Response:
         """
