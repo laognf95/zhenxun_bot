@@ -139,6 +139,7 @@ dmypy.json
 cython_debug/
 
 test.py
+test.test
 server_ip.py
 member_activity_handle.py
 Yu-Gi-Oh/
