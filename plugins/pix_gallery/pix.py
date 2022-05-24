@@ -5,7 +5,7 @@ from utils.message_builder import image, custom_forward_msg
 from utils.manager import withdraw_message_manager
 from utils.utils import change_pixiv_image_links
 from services.log import logger
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message, GROUP_ADMIN, GROUP_OWNER
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message, exception, GROUP_ADMIN, GROUP_OWNER
 from nonebot.params import CommandArg
 from ._data_source import get_image
 from ._model.pixiv import Pixiv
@@ -200,15 +200,22 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         and num >= Config.get_config("pix", "MAX_ONCE_NUM2FORWARD")
         and isinstance(event, GroupMessageEvent)
     ):
-        msg_id = await bot.send_group_forward_msg(
-            group_id=event.group_id, messages=custom_forward_msg(msg_list, bot.self_id)
-        )
+        try:
+            msg_id = await bot.send_group_forward_msg(
+                group_id=event.group_id, messages=custom_forward_msg(msg_list, bot.self_id)
+            )
+        except exception.ActionFailed:
+            await pix.send(f'聊天记录发送失败了...难道因为太色了？')
         withdraw_message_manager.withdraw_message(
             event, msg_id, Config.get_config("pix", "WITHDRAW_PIX_MESSAGE")
         )
     else:
         for msg in msg_list:
-            msg_id = await pix.send(msg)
+            try:
+                msg_id = await pix.send(msg)
+            except exception.ActionFailed:
+                await pix.send(f'pid:{pid}发送失败了...难道因为太色了？')
+                continue
             withdraw_message_manager.withdraw_message(
                 event, msg_id, Config.get_config("pix", "WITHDRAW_PIX_MESSAGE")
             )
