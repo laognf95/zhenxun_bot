@@ -82,17 +82,19 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
     else:
         nsfw_tag = 0
     if nsfw_tag != 0:
-        if isinstance(event, GroupMessageEvent):
-            flag = False
-            if await GROUP_ADMIN(bot, event):
-                flag = True
-            elif await GROUP_OWNER(bot, event):
-                flag = True
-            elif str(event.user_id) in bot.config.superusers:
-                flag = True
-            if not flag:
-                await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-        elif str(event.user_id) not in bot.config.superusers:
+        # if isinstance(event, GroupMessageEvent):
+        #     flag = False
+        #     if await GROUP_ADMIN(bot, event):
+        #         flag = True
+        #     elif await GROUP_OWNER(bot, event):
+        #         flag = True
+        #     elif str(event.user_id) in bot.config.superusers:
+        #         flag = True
+        #     if not flag:
+        #         await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        # elif str(event.user_id) not in bot.config.superusers:
+        #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        if str(event.user_id) not in bot.config.superusers:
             await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
             
     # if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
