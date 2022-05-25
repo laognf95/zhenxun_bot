@@ -59,7 +59,13 @@ Config.add_plugin_config(
     help_="是否显示图片的基本信息，如PID等",
     default_value=True
 )
-
+Config.add_plugin_config(
+    "pix",
+    "SP_KEY_WORD",
+    None,
+    help_="特殊关键字（bot管理员不想暴露的xp）",
+    default_value=None
+)
 nonebot.load_plugins("plugins/pix_gallery")
 
 
