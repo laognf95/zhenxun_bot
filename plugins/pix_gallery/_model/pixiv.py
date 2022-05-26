@@ -1,6 +1,6 @@
 from typing import Optional, List
 from services.db_context import db
-
+from configs.config import Config
 
 class Pixiv(db.Model):
     __tablename__ = "pixiv"
@@ -109,7 +109,8 @@ class Pixiv(db.Model):
         uid: Optional[int] = None,
         pid: Optional[int] = None,
         r18: Optional[int] = 0,
-        num: int = 100
+        num: int = 100,
+        spuser = True
     ) -> List[Optional["Pixiv"]]:
         """
         说明：
@@ -121,6 +122,7 @@ class Pixiv(db.Model):
             :param r18: 是否r18，0：非r18  1：r18  2：混合
             :param num: 查找图片的数量
         """
+        spkw=Config.get_config("pix", "SP_KEY_WORD")
         if r18 == 0:
             query = cls.query.where(cls.is_r18 == False)
         elif r18 == 1:
@@ -130,6 +132,8 @@ class Pixiv(db.Model):
         if keywords:
             for keyword in keywords:
                 query = query.where(cls.tags.contains(keyword))
+        if spkw and not spuser:
+            query = query.where(cls.tags.notlike(rf'%{spkw}%'))
         elif uid:
             query = query.where(cls.uid == uid)
         elif pid:
