@@ -1,15 +1,10 @@
-# from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilireq.exceptions import ResponseCodeError
 from utils.manager import resources_manager
 from asyncio.exceptions import TimeoutError
 from .model import BilibiliSub
-# from bilibili_api.live import LiveRoom
 from bilireq.live import get_room_info_by_id
-# from bilibili_api import bangumi
 from .utils import get_meta
 from utils.message_builder import image
-# from bilibili_api import user
-# from bilibili_api.user import User
 from bilireq.user import get_user_info
 from bilireq import dynamic
 from .utils import get_videos
@@ -248,7 +243,7 @@ async def _get_up_status(id_: int) -> Optional[str]:
     """
     _user = await BilibiliSub.get_sub(id_)
     """bilibili_api.user库中User类的get_user_info改为bilireq.user库的get_user_info方法"""
-    user_info = await get_user_info(id_)
+    user_info = await get_user_info(_user.uid)
     uname = user_info["name"]
     """bilibili_api.user库中User类的get_videos改为bilireq.user库的get_videos方法"""
     video_info = await get_videos(id_)
@@ -329,21 +324,21 @@ async def get_user_dynamic(
                     wait_until="networkidle",
                     timeout=10000,
                 )
-                await page.set_viewport_size({"width": 2560, "height": 1080})
+                await page.set_viewport_size({"width": 2560, "height": 1080, "timeout": 10000*20}) # timeout: 200s
                 # 删除置顶
                 await page.evaluate(
                     """
                     xs = document.getElementsByClassName('bili-dyn-item__tag');
                     for (x of xs) {
-                      x.parentNode.remove();
+                      x.parentNode.parentNode.remove();
                     }
                 """
                 )
-                card = await page.query_selector(".bili-dyn-list__item")
+                card = page.locator(".bili-dyn-list__item").first
+                await card.wait_for()
                 # 截图并保存
                 await card.screenshot(
                     path=dynamic_path / f"{local_user.sub_id}_{dynamic_upload_time}.jpg",
-                    timeout=100000,
                 )
             except Exception as e:
                 logger.error(f"B站订阅：获取用户动态 发送错误 {type(e)}：{e}")

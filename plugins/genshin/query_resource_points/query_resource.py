@@ -1,6 +1,6 @@
+from pathlib import Path
 from typing import Tuple, Optional, List
 from configs.path_config import IMAGE_PATH, TEXT_PATH
-from PIL.Image import UnidentifiedImageError
 from utils.message_builder import image
 from services.log import logger
 from utils.image_utils import BuildImage
@@ -137,7 +137,7 @@ async def download_resource_data(semaphore: Semaphore):
                                 asyncio.ensure_future(
                                     download_image(
                                         img_url,
-                                        f"{icon_path}/{id_}.png",
+                                        icon_path / f"{id_}.png",
                                         semaphore,
                                         True,
                                     )
@@ -179,7 +179,7 @@ async def download_map_init(semaphore: Semaphore, flag: bool = False):
                         map_url = _map_data["url"]
                         await download_image(
                             map_url,
-                            f"{map_path}/{idx}.png",
+                            map_path / f"{idx}.png",
                             semaphore,
                             force_flag=flag,
                         )
@@ -228,15 +228,14 @@ async def download_resource_type():
     except (TimeoutError, ConnectTimeout):
         logger.warning("下载原神资源类型数据超时....")
     except Exception as e:
-        logger.error(f"载原神资源类型数据超时 {type(e)}：{e}")
+        logger.error(f"载原神资源类型数据错误 {type(e)}：{e}")
 
 
 # 初始化资源图标
-def gen_icon(icon: str):
+def gen_icon(icon: Path):
     A = BuildImage(0, 0, background=f"{icon_path}/box.png")
     B = BuildImage(0, 0, background=f"{icon_path}/box_alpha.png")
-    icon_ = icon_path / f"{icon}"
-    icon_img = BuildImage(115, 115, background=icon_)
+    icon_img = BuildImage(115, 115, background=icon)
     icon_img.circle()
     B.paste(icon_img, (17, 10), True)
     B.paste(A, alpha=True)
@@ -247,22 +246,22 @@ def gen_icon(icon: str):
 # 下载图片
 async def download_image(
     img_url: str,
-    path: str,
+    path: Path,
     semaphore: Semaphore,
     gen_flag: bool = False,
     force_flag: bool = False,
 ):
     async with semaphore:
         try:
-            if not os.path.exists(path) or not is_valid or force_flag:
+            if not path.exists() or not is_valid(path) or force_flag:
                 if await AsyncHttpx.download_file(img_url, path, timeout=10):
                     logger.info(f"下载原神资源图标：{img_url}")
                     if gen_flag:
                         gen_icon(path)
                 else:
                     logger.info(f"下载原神资源图标：{img_url} 失败，等待下次更新...")
-        except UnidentifiedImageError:
-            logger.warning(f"原神图片打开错误..已删除，等待下次更新... file: {path}")
+        except Exception as e:
+            logger.warning(f"原神图片错误..已删除，等待下次更新... file: {path} {type(e)}：{e}")
             if os.path.exists(path):
                 os.remove(path)
 

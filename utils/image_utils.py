@@ -121,7 +121,7 @@ def fig2b64(plt_: plt) -> str:
     return "base64://" + base64_str
 
 
-def is_valid(file: str) -> bool:
+def is_valid(file: Union[str, Path]) -> bool:
     """
     说明：
         判断图片是否损坏
@@ -1493,10 +1493,11 @@ async def text2image(
         height = 0
         _tmp = BuildImage(0, 0, font=font, font_size=font_size)
         for x in text.split("\n"):
-            x = x if x.strip() else "正"
-            w, h = _tmp.getsize(x)
-            height += h + _add_height
-            width = width if width > w else w
+            if x:
+                w, _ = _tmp.getsize(x)
+                _, h = _tmp.getsize("正")
+                height += h + _add_height
+                width = width if width > w else w
         width += pw
         height += ph
         A = BuildImage(
