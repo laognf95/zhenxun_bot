@@ -94,6 +94,8 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
         elif str(event.user_id) not in bot.config.superusers:
             await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        # if str(event.user_id) not in bot.config.superusers:
+        #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
             
     # if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
     #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
@@ -118,7 +120,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             pix_num = 15
             omega_num = 15
         all_image = await Pixiv.query_images(
-            uid=int(keyword), num=pix_num, r18=1 if nsfw_tag == 2 else 0
+            uid=int(keyword), num=pix_num, r18=1 if nsfw_tag == 2 else 0, spuser=str(event.user_id) in bot.config.superusers
         ) + await OmegaPixivIllusts.query_images(
             uid=int(keyword), num=omega_num, nsfw_tag=nsfw_tag
         )
@@ -127,7 +129,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         if not is_number(pid):
             await pix.finish("PID必须是数字...", at_sender=True)
         all_image = await Pixiv.query_images(
-            pid=int(pid), r18=1 if nsfw_tag == 2 else 0
+            pid=int(pid), r18=1 if nsfw_tag == 2 else 0, spuser=str(event.user_id) in bot.config.superusers
         )
         if not all_image:
             all_image = await OmegaPixivIllusts.query_images(
@@ -135,7 +137,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
             )
     else:
         tmp = await Pixiv.query_images(
-            x, r18=1 if nsfw_tag == 2 else 0, num=pix_num
+            x, r18=1 if nsfw_tag == 2 else 0, num=pix_num, spuser=str(event.user_id) in bot.config.superusers
         ) + await OmegaPixivIllusts.query_images(x, nsfw_tag=nsfw_tag, num=omega_num)
         tmp_ = []
         all_image = []
