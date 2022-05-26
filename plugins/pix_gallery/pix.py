@@ -84,7 +84,6 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         nsfw_tag = 2
     else:
         nsfw_tag = 0
-<<<<<<< HEAD
     if nsfw_tag != 0:
         if isinstance(event, GroupMessageEvent):
             flag = False
@@ -105,15 +104,6 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
     #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
     if n := len(x) == 1 and is_number(x[0]):
         num = int(x[-1])
-=======
-    if str(event.user_id) not in bot.config.superusers:
-        if (nsfw_tag == 1 and not Config.get_config("pix", "ALLOW_GROUP_SETU")) or (
-            nsfw_tag == 2 and not Config.get_config("pix", "ALLOW_GROUP_R18")
-        ):
-            await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-    if n := len(x) == 1 and is_number(x[0]) and int(x[0]) < 100:
-        num = int(x[0])
->>>>>>> main
         keyword = ""
     elif n > 1:
         if is_number(x[-1]):
