@@ -85,20 +85,20 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
     else:
         nsfw_tag = 0
     if nsfw_tag != 0:
-        if isinstance(event, GroupMessageEvent):
-            flag = False
-            if await GROUP_ADMIN(bot, event):
-                flag = True
-            elif await GROUP_OWNER(bot, event):
-                flag = True
-            elif str(event.user_id) in bot.config.superusers:
-                flag = True
-            if not flag:
-                await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-        elif str(event.user_id) not in bot.config.superusers:
-            await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-        # if str(event.user_id) not in bot.config.superusers:
+        # if isinstance(event, GroupMessageEvent):
+        #     flag = False
+        #     if await GROUP_ADMIN(bot, event):
+        #         flag = True
+        #     elif await GROUP_OWNER(bot, event):
+        #         flag = True
+        #     elif str(event.user_id) in bot.config.superusers:
+        #         flag = True
+        #     if not flag:
+        #         await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        # elif str(event.user_id) not in bot.config.superusers:
         #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+        if str(event.user_id) not in bot.config.superusers:
+            await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
             
     # if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
     #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
@@ -116,8 +116,8 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                     await pix.send(f"太贪心了，就给你发 {num}张 好了")
             x = x[:-1]
             keyword = " ".join(x)
-    pix_num = int(num * PIX_RATIO) + 15 if PIX_RATIO != 0 else 0
-    omega_num = num - pix_num + 15
+    pix_num = int(30 * PIX_RATIO)
+    omega_num = 30 - pix_num
     if is_number(keyword):
         if num == 1:
             pix_num = 15
