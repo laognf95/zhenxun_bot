@@ -40,7 +40,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
         voice = random.choice(os.listdir(RECORD_PATH / "dinggong"))
         result = record(voice, "dinggong")
         await dg_voice.send(result)
-        await dg_voice.send(voice.split("_")[1])
+        # await dg_voice.send(voice.split("_")[1])
         logger.info(
             f"(USER {event.user_id}, GROUP "
             f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'}) 发送钉宫骂人:"
