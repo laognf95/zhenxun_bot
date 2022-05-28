@@ -72,7 +72,7 @@ async def _poke_event(event: PokeNotifyEvent):
             voice = random.choice(os.listdir(RECORD_PATH / "dinggong"))
             result = record(voice, "dinggong")
             await poke_.send(result)
-            await poke_.send(voice.split("_")[1])
+            # await poke_.send(voice.split("_")[1])
             logger.info(
                 f'USER {event.user_id} 戳了戳我 回复: {result} \n {voice.split("_")[1]}'
             )
