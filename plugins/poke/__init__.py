@@ -67,7 +67,7 @@ async def _poke_event(event: PokeNotifyEvent):
             index = random.randint(0, len(os.listdir(IMAGE_PATH / "image_management" / path)))
             result = f"id：{index}" + image(f"{index}.jpg", "image_management/" + path)
             await poke_.send(result)
-            logger.info(f"USER {event.user_id} 戳了戳我 回复: {result} \n {result}")
+            logger.info(f"USER {event.user_id} 戳了戳我 回复: {result}  {result}")
         elif 0.3 < rand < 0.6:
             voice = random.choice(os.listdir(RECORD_PATH / "dinggong"))
             result = record(voice, "dinggong")
