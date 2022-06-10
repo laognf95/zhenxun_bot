@@ -220,7 +220,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 msg_id = await pix.send(msg)
             except exception.ActionFailed:
                 await pix.send(f'pid:{pid}发送失败了...难道因为太色了？')
-                continue
+                msg_id = await pix.send(f'要不试试直接点原图链接？\r{o_url}')
             withdraw_message_manager.withdraw_message(
                 event, msg_id, Config.get_config("pix", "WITHDRAW_PIX_MESSAGE")
             )
