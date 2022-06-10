@@ -141,6 +141,7 @@ cython_debug/
 test.py
 test.test
 server_ip.py
+game_utils.py
 member_activity_handle.py
 Yu-Gi-Oh/
 csgo/
