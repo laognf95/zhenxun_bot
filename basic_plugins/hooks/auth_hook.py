@@ -180,9 +180,9 @@ async def _(matcher: Matcher, bot: Bot, event: Event, state: T_State):
                         event.group_id
                     ):
                         _flmt_s.start_cd(event.group_id)
-                        await bot.send_group_msg(
-                            group_id=event.group_id, message="该群未开启此功能.."
-                        )
+                        # await bot.send_group_msg(
+                        #     group_id=event.group_id, message="该群未开启此功能.."
+                        # )
                 except ActionFailed:
                     pass
                 if event.is_tome():
