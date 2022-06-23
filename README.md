@@ -243,6 +243,48 @@ __Docker 最新版本由 [Sakuracio](https://github.com/Sakuracio) 提供__
 
 ## 更新
 
+### 2022/6/21
+
+* update parse_bilibili
+
+### 2022/6/19 \[v0.1.6.0]
+
+* 暂时使用hook修复webui中plugins2setting修改时会改变plugins2setting.cmd为字符串
+* 修复原神树脂重复提醒的bug [@pull/828](https://github.com/HibiKier/zhenxun_bot/pull/828)
+* 词条优化问题展示,修改含机器人昵称和@逻辑 [@pull/835](https://github.com/HibiKier/zhenxun_bot/pull/835)
+
+### 2022/6/18
+
+* 修复昵称系统`BLACK_WORD`为空时造成报错
+* 修复特殊头像时背景透明化出错
+* 修复text2image纯文本时换行时颜色不统一
+* 优化webUI，当有插件出错时不会影响其他插件显示
+* 优化Config类型注释 [@pull/830](https://github.com/HibiKier/zhenxun_bot/pull/830)
+* 优化browser
+
+### 2022/6/17
+
+* 修复wordbank的一些小问题 @pull/820
+
+### 2022/6/14
+
+* AsyncHttpx提供可关闭 ssl 验证参数 [@pull/812](https://github.com/HibiKier/zhenxun_bot/pull/812)
+* fix: 自动更新群组 [@pull/810](https://github.com/HibiKier/zhenxun_bot/pull/810)
+* fix: 修复添加词条时对answer中图片的处理 [@pull/806](https://github.com/HibiKier/zhenxun_bot/pull/806)
+* 修复pix中指定num无法生效
+* 替换了bt URL
+
+### 2022/6/13
+
+* Windows 重启适配 [@pull/804](https://github.com/HibiKier/zhenxun_bot/pull/804)
+* 色图等提供修改md5方法 [@pull/800](https://github.com/HibiKier/zhenxun_bot/pull/800)
+* webui中token.json文件写入补充 [@pull/798](https://github.com/HibiKier/zhenxun_bot/pull/798)
+* 修复识图某些图片可能会出错
+
+### 2022/6/11
+
+* pix当只有一个tag时且为数字时可以通过添加'#'防止判定为数量
+
 ### 2022/6/9
 
 * 修复b站订阅同群二人以上相同订阅时发送多次信息
@@ -289,7 +331,6 @@ __Docker 最新版本由 [Sakuracio](https://github.com/Sakuracio) 提供__
 * 新增自动更新插件```UPDATE_REMIND```：新版本提醒，原配置项```AUTO_UPDATE_ZHENXUN```改为自动更新升级
 * black_word新增当群权限为-1时不再检测该群
 * 修复非超级用户绑定原神cookie会被black_word阻拦
-* 修复webui中plugins2setting修改时会改变plugins2setting.cmd为字符串
 * 修复微博热搜报错,发红包小bug [@pull/688](https://github.com/HibiKier/zhenxun_bot/pull/688)
 * 更多的中文提示
 
@@ -617,9 +658,12 @@ __Docker 最新版本由 [Sakuracio](https://github.com/Sakuracio) 提供__
 
 __..... 更多更新信息请查看文档__
 
-
 ## Todo
 - [ ] web管理
+
+## 爱发电
+
+<img width="365px" height="450px" src="https://user-images.githubusercontent.com/45528451/175059389-cfeb8174-fa07-4939-80ab-a039087a50f6.png">
 
 ## 感谢
 [botuniverse / onebot](https://github.com/botuniverse/onebot) ：超棒的机器人协议  
