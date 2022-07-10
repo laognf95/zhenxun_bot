@@ -243,9 +243,42 @@ __Docker 最新版本由 [Sakuracio](https://github.com/Sakuracio) 提供__
 
 ## 更新
 
+### 2022/7/7
+
+* 微博热搜选择单条热搜时也会检测时效性 [@pull/891](https://github.com/HibiKier/zhenxun_bot/pull/891)
+
+### 2022/7/4
+
+* 修复商品未设置限购时无法购买
+* 修复B站订阅UP动态 [@pull/886](https://github.com/HibiKier/zhenxun_bot/pull/886)
+* 修复色图命令带tag时配置项`MAX_ONCE_NUM2FORWARD`无法生效
+
+### 2022/7/3 \[v0.1.6.1]
+
+* BagUser提供方法`check_props`方法，用于判断用户是否含有该道具并是否使用
+* 优化商品显示图片，提供限制，限购，折扣提示
+* 修复图库内图片无法被连续删除的问题 [@pull/879](https://github.com/HibiKier/zhenxun_bot/pull/879)
+* 色图提供配置项`MAX_ONCE_NUM2FORWARD`：群聊中单次发送图片数量达到指定时使用合并转发
+* 优化修复了商品修改命令
+* B站订阅UP动态改为详情页截图
+
+### 2022/6/28
+
+* 修复色图插件api修改无法搜索图片 [@pull/866](https://github.com/HibiKier/zhenxun_bot/pull/866)
+
+### 2022/6/26
+
+* 替换了bt URL
+* PIX当使用pid查询图片时，会发送该pid下所有图片
+* 商店提供了每日购买次数限制
+
+### 2022/6/24
+
+* 对WSL虚拟机 代理 添加写法 [@pull/847](https://github.com/HibiKier/zhenxun_bot/pull/847)
+
 ### 2022/6/21
 
-* update parse_bilibili
+* update parse_bilibili [@pull/840](https://github.com/HibiKier/zhenxun_bot/pull/840)
 
 ### 2022/6/19 \[v0.1.6.0]
 

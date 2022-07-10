@@ -70,7 +70,7 @@ def record(voice_name: str, path: str = None) -> MessageSegment or str:
     if "http" in voice_name:
         return MessageSegment.record(voice_name)
     if file.exists():
-        result = MessageSegment.record(file.absolute())
+        result = MessageSegment.record(f"file:///{file.absolute()}")
         return result
     else:
         logger.warning(f"语音{file.absolute()}缺失...")
@@ -157,7 +157,7 @@ def music(type_: str, id_: int) -> MessageSegment:
 
 
 def custom_forward_msg(
-        msg_list: List[str], uin: Union[int, str], name: str = f"这里是{NICKNAME}"
+        msg_list: List[Union[str, Message]], uin: Union[int, str], name: str = f"这里是{NICKNAME}"
 ) -> List[dict]:
     """
     生成自定义合并消息
