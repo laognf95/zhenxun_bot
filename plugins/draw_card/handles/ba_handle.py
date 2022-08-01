@@ -1,4 +1,5 @@
 import random
+import bs4
 from lxml import etree
 from typing import List, Tuple
 from PIL import ImageDraw
@@ -94,41 +95,53 @@ class BaHandle(BaseHandle[BaChar]):
             BaChar(
                 name=value["名称"],
                 star=int(value["星级"]),
-                limited=True if "（" in key else False,
+                limited=value["限定"],
             )
             for key, value in self.load_data().items()
         ]
     
-    def title2star(self, title: int):
-        if title == 'Star-3.png':
-            return 3
-        elif title == 'Star-2.png':
-            return 2
-        else:
-            return 1
+    # def title2star(self, title: int):
+    #     if title == 'Star-3.png':
+    #         return 3
+    #     elif title == 'Star-2.png':
+    #         return 2
+    #     else:
+    #         return 1
 
     async def _update_info(self):
         info = {}
-        url = "https://wiki.biligame.com/bluearchive/学生筛选"
+        # url = "https://wiki.biligame.com/bluearchive/学生筛选"
+        url = "https://bluearchive.wikiru.jp/?%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC%E5%AE%9F%E8%A3%85%E5%B1%A5%E6%AD%B4"
         result = await self.get_url(url)
         if not result:
             logger.warning(f"更新 {self.game_name_cn} 出错")
             return
         else:
-            dom = etree.HTML(result, etree.HTMLParser())
-            char_list = dom.xpath("//div[@class='filters']/table[2]/tbody/tr")
+            # dom = etree.HTML(result, etree.HTMLParser())
+            soup = bs4.BeautifulSoup(result, 'lxml')
+            table = soup.select('#sortabletable1 tbody')[0]
+            char_list = table.find_all('tr')
+            # char_list = dom.xpath("//div[@class='filters']/table[2]/tbody/tr")
             for char in char_list:
+                char:bs4.element.Tag
                 try:
-                    name = char.xpath("./td[2]/a/div/text()")[0]
-                    avatar = char.xpath("./td[1]/div/div/a/img/@data-src")[0]
-                    star_pic = char.xpath("./td[4]/img/@alt")[0]
+                    # name = char.xpath("./td[2]/a/div/text()")[0]
+                    # avatar = char.xpath("./td[1]/div/div/a/img/@data-src")[0]
+                    # star_pic = char.xpath("./td[4]/img/@alt")[0]
+                    char = char.find_all("td")
+                    charname = char[1].text
+                    fname = charname+'_icon.png'
+                    fname = ''.join([x[2:].upper() for x in map(hex,fname.encode('utf8'))])
+                    avatar = f'https://bluearchive.wikiru.jp/attach2/696D67_{fname}.png'
+                    member_dict = {
+                        "头像": unquote(str(avatar)),
+                        "名称": remove_prohibited_str(char[1].text),
+                        "星级": int(char[0].text.replace('★','')),
+                        "限定": True if char[3].text != '〇' else False,
+                    }
                 except IndexError:
                     continue
-                member_dict = {
-                    "头像": unquote(str(avatar)),
-                    "名称": remove_prohibited_str(name),
-                    "星级": self.title2star(star_pic),
-                }
+
                 info[member_dict["名称"]] = member_dict
         self.dump_data(info)
         logger.info(f"{self.game_name_cn} 更新成功")

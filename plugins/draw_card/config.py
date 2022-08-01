@@ -89,7 +89,8 @@ class OnmyojiConfig(BaseModel, extra=Extra.ignore):
 
 #碧蓝档案
 class BaConfig(BaseModel, extra=Extra.ignore):
-    BA_THREE_P: float = 0.025
+    BA_SP_P: float = 0.007
+    BA_THREE_P: float = 0.018
     BA_TWO_P: float = 0.185
     BA_ONE_P: float = 0.79
     BA_G_TWO_P: float = 0.975
