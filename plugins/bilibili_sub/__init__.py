@@ -1,6 +1,9 @@
-from nonebot import on_command
+from nonebot import on_command, on_regex
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message
+
+from utils.image_utils import text2image
+from utils.message_builder import image
 from .data_source import (
     add_live_sub,
     delete_sub,
@@ -14,10 +17,10 @@ from .data_source import (
 from models.level_user import LevelUser
 from configs.config import Config
 from utils.utils import is_number, scheduler, get_bot
-from typing import Optional
+from typing import Optional, Tuple, Any
 from services.log import logger
 from nonebot import Driver
-from nonebot.params import CommandArg, ArgStr
+from nonebot.params import CommandArg, ArgStr, RegexGroup
 import nonebot
 
 __zx_plugin_name__ = "B站订阅"
@@ -50,12 +53,22 @@ __plugin_configs__ = {
         "value": 5,
         "help": "群内bilibili订阅需要管理的权限",
         "default_value": 5,
-    }
+    },
+    "LIVE_MSG_AT_ALL": {
+        "value": False,
+        "help": "直播提醒是否AT全体（仅在真寻是管理员时生效）",
+        "default_value": False,
+    },
+    "UP_MSG_AT_ALL": {
+        "value": False,
+        "help": "UP动态投稿提醒是否AT全体（仅在真寻是管理员时生效）",
+        "default_value": False,
+    },
 }
 
 add_sub = on_command("添加订阅", priority=5, block=True)
-del_sub = on_command("删除订阅", priority=5, block=True)
-show_sub_info = on_command("查看订阅", priority=5, block=True)
+del_sub = on_regex(r"^删除订阅(\d+)$", priority=5, block=True)
+show_sub_info = on_regex("^查看订阅$", priority=5, block=True)
 
 driver: Driver = nonebot.get_driver()
 
@@ -144,10 +157,8 @@ async def _(
 
 
 @del_sub.handle()
-async def _(event: MessageEvent, arg: Message = CommandArg()):
-    msg = arg.extract_plain_text().strip()
-    if not is_number(msg):
-        await del_sub.finish("Id必须为数字！", at_sender=True)
+async def _(event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGroup()):
+    msg = reg_group[0]
     id_ = (
         f"{event.user_id}:{event.group_id}"
         if isinstance(event, GroupMessageEvent)
@@ -195,7 +206,15 @@ async def _(event: MessageEvent):
         live_rst = (
             "该群目前没有任何订阅..." if isinstance(event, GroupMessageEvent) else "您目前没有任何订阅..."
         )
-    await show_sub_info.send(live_rst + up_rst + season_rst)
+    await show_sub_info.send(
+        image(
+            b64=(
+                await text2image(
+                    live_rst + up_rst + season_rst, padding=10, color="#f9f6f2"
+                )
+            ).pic2bs4()
+        )
+    )
 
 
 # 推送
@@ -233,10 +252,22 @@ async def send_sub_msg(rst: str, sub: BilibiliSub, bot: Bot):
         for x in sub.sub_users.split(",")[:-1]:
             try:
                 if ":" in x and x.split(":")[1] not in temp_group:
-                    temp_group.append(x.split(":")[1])
-                    await bot.send_group_msg(
-                            group_id=int(x.split(":")[1]), message=Message(rst)
-                    )
+                    group_id = int(x.split(":")[1])
+                    temp_group.append(group_id)
+                    if (
+                        await bot.get_group_member_info(
+                            group_id=group_id, user_id=int(bot.self_id), no_cache=True
+                        )
+                    )["role"] in ["owner", "admin"]:
+                        if (
+                            sub.sub_type == "live"
+                            and Config.get_config("bilibili_sub", "LIVE_MSG_AT_ALL")
+                        ) or (
+                            sub.sub_type == "up"
+                            and Config.get_config("bilibili_sub", "UP_MSG_AT_ALL")
+                        ):
+                            rst = "[CQ:at,qq=all]\n" + rst
+                    await bot.send_group_msg(group_id=group_id, message=Message(rst))
                 else:
                     await bot.send_private_msg(user_id=int(x), message=Message(rst))
             except Exception as e:

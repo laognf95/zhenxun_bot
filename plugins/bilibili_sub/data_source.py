@@ -3,6 +3,8 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 
 from utils.manager import resources_manager
 from asyncio.exceptions import TimeoutError
+
+from utils.utils import get_bot
 from .model import BilibiliSub
 from bilireq.live import get_room_info_by_id
 from .utils import get_meta
@@ -229,6 +231,7 @@ async def _get_live_status(id_: int) -> Optional[str]:
         await BilibiliSub.update_sub_info(id_, live_status=live_status)
     if sub.live_status == 0 and live_status == 1:
         return (
+            f""
             f"{image(cover)}\n"
             f"{sub.uname} 开播啦！\n"
             f"标题：{title}\n"
@@ -253,14 +256,14 @@ async def _get_up_status(id_: int) -> Optional[str]:
     video = None
     if _user.uname != uname:
         await BilibiliSub.update_sub_info(id_, uname=uname)
-    dynamic_img, dynamic_upload_time = await get_user_dynamic(id_, _user)
+    dynamic_img, dynamic_upload_time, link = await get_user_dynamic(id_, _user)
     if video_info["list"].get("vlist"):
         video = video_info["list"]["vlist"][0]
         latest_video_created = video["created"]
     rst = ""
     if dynamic_img:
         await BilibiliSub.update_sub_info(id_, dynamic_upload_time=dynamic_upload_time)
-        rst += f"{uname} 发布了动态！\n" f"{dynamic_img}\n"
+        rst += f"{uname} 发布了动态！\n" f"{dynamic_img}\n{link}"
     if (
         latest_video_created
         and _user.latest_video_created
@@ -306,7 +309,7 @@ async def _get_season_status(id_) -> Optional[str]:
 
 async def get_user_dynamic(
     uid: int, local_user: BilibiliSub
-) -> Tuple[Optional[MessageSegment], int]:
+) -> Tuple[Optional[MessageSegment], int, str]:
     """
     获取用户动态
     :param uid: 用户uid
@@ -369,8 +372,9 @@ async def get_user_dynamic(
                     "bilibili_sub/dynamic",
                 ),
                 dynamic_upload_time,
+                f"https://t.bilibili.com/{dynamic_id}"
             )
-    return None, 0
+    return None, 0, ''
 
 
 class SubManager:
