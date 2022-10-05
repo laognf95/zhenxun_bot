@@ -45,7 +45,7 @@ __plugin_type__ = ("来点好康的",)
 __plugin_version__ = 0.1
 __plugin_author__ = "HibiKier"
 __plugin_settings__ = {
-    "level": 5,
+    "level": 9,
     "default_status": True,
     "limit_superuser": False,
     "cmd": ["pix", "Pix", "PIX", "pIx"],
