@@ -1,4 +1,5 @@
 from configs.config import Config
+from utils.manager import GDict
 import nonebot
 
 
@@ -66,6 +67,8 @@ Config.add_plugin_config(
     help_="特殊关键字（bot管理员不想暴露的xp）",
     default_value=None
 )
+GDict['run_sql'].append("ALTER TABLE omega_pixiv_illusts ADD classified Integer;")
+
 nonebot.load_plugins("plugins/pix_gallery")
 
 

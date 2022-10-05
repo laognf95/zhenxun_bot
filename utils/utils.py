@@ -150,9 +150,9 @@ class DailyNumberLimiter:
 
 def is_number(s: str) -> bool:
     """
-    说明：
+    说明:
         检测 s 是否为数字
-    参数：
+    参数:
         :param s: 文本
     """
     try:
@@ -172,7 +172,7 @@ def is_number(s: str) -> bool:
 
 def get_bot() -> Optional[Bot]:
     """
-    说明：
+    说明:
         获取 bot 对象
     """
     try:
@@ -181,22 +181,29 @@ def get_bot() -> Optional[Bot]:
         return None
 
 
-def get_matchers() -> List[Type[Matcher]]:
+def get_matchers(distinct: bool = False) -> List[Type[Matcher]]:
     """
-    获取所有插件
+    说明:
+        获取所有matcher
+    参数:
+        distinct: 去重
     """
     _matchers = []
+    temp = []
     for i in matchers.keys():
         for matcher in matchers[i]:
+            if distinct and matcher.plugin_name in temp:
+                continue
+            temp.append(matcher.plugin_name)
             _matchers.append(matcher)
     return _matchers
 
 
 def get_message_at(data: Union[str, Message]) -> List[int]:
     """
-    说明：
+    说明:
         获取消息中所有的 at 对象的 qq
-    参数：
+    参数:
         :param data: event.json()
     """
     qq_list = []
@@ -214,9 +221,9 @@ def get_message_at(data: Union[str, Message]) -> List[int]:
 
 def get_message_img(data: Union[str, Message]) -> List[str]:
     """
-    说明：
+    说明:
         获取消息中所有的 图片 的链接
-    参数：
+    参数:
         :param data: event.json()
     """
     img_list = []
@@ -231,11 +238,30 @@ def get_message_img(data: Union[str, Message]) -> List[str]:
     return img_list
 
 
+def get_message_face(data: Union[str, Message]) -> List[str]:
+    """
+    说明:
+        获取消息中所有的 face Id
+    参数:
+        :param data: event.json()
+    """
+    face_list = []
+    if isinstance(data, str):
+        data = json.loads(data)
+        for msg in data["message"]:
+            if msg["type"] == "face":
+                face_list.append(msg["data"]["id"])
+    else:
+        for seg in data["face"]:
+            face_list.append(seg.data["id"])
+    return face_list
+
+
 def get_message_img_file(data: Union[str, Message]) -> List[str]:
     """
-    说明：
+    说明:
         获取消息中所有的 图片file
-    参数：
+    参数:
         :param data: event.json()
     """
     file_list = []
@@ -252,9 +278,9 @@ def get_message_img_file(data: Union[str, Message]) -> List[str]:
 
 def get_message_text(data: Union[str, Message]) -> str:
     """
-    说明：
+    说明:
         获取消息中 纯文本 的信息
-    参数：
+    参数:
         :param data: event.json()
     """
     result = ""
@@ -267,14 +293,14 @@ def get_message_text(data: Union[str, Message]) -> str:
     else:
         for seg in data["text"]:
             result += seg.data["text"] + " "
-    return result
+    return result.strip()
 
 
 def get_message_record(data: Union[str, Message]) -> List[str]:
     """
-    说明：
+    说明:
         获取消息中所有 语音 的链接
-    参数：
+    参数:
         :param data: event.json()
     """
     record_list = []
@@ -291,9 +317,9 @@ def get_message_record(data: Union[str, Message]) -> List[str]:
 
 def get_message_json(data: str) -> List[dict]:
     """
-    说明：
+    说明:
         获取消息中所有 json
-    参数：
+    参数:
         :param data: event.json()
     """
     try:
@@ -309,7 +335,7 @@ def get_message_json(data: str) -> List[dict]:
 
 def get_local_proxy():
     """
-    说明：
+    说明:
         获取 config.py 中设置的代理
     """
     return SYSTEM_PROXY if SYSTEM_PROXY else None
@@ -317,9 +343,9 @@ def get_local_proxy():
 
 def is_chinese(word: str) -> bool:
     """
-    说明：
+    说明:
         判断字符串是否为纯中文
-    参数：
+    参数:
         :param word: 文本
     """
     for ch in word:
@@ -330,9 +356,9 @@ def is_chinese(word: str) -> bool:
 
 async def get_user_avatar(qq: int) -> Optional[bytes]:
     """
-    说明：
+    说明:
         快捷获取用户头像
-    参数：
+    参数:
         :param qq: qq号
     """
     url = f"http://q1.qlogo.cn/g?b=qq&nk={qq}&s=160"
@@ -347,9 +373,9 @@ async def get_user_avatar(qq: int) -> Optional[bytes]:
 
 async def get_group_avatar(group_id: int) -> Optional[bytes]:
     """
-    说明：
+    说明:
         快捷获取用群头像
-    参数：
+    参数:
         :param group_id: 群号
     """
     url = f"http://p.qlogo.cn/gh/{group_id}/{group_id}/640/"
@@ -364,9 +390,9 @@ async def get_group_avatar(group_id: int) -> Optional[bytes]:
 
 def cn2py(word: str) -> str:
     """
-    说明：
+    说明:
         将字符串转化为拼音
-    参数：
+    参数:
         :param word: 文本
     """
     temp = ""
@@ -379,9 +405,9 @@ def change_pixiv_image_links(
     url: str, size: Optional[str] = None, nginx_url: Optional[str] = None
 ):
     """
-    说明：
+    说明:
         根据配置改变图片大小和反代链接
-    参数：
+    参数:
         :param url: 图片原图链接
         :param size: 模式
         :param nginx_url: 反代
@@ -404,9 +430,9 @@ def change_pixiv_image_links(
 
 def change_img_md5(path_file: Union[str, Path]) -> bool:
     """
-    说明：
+    说明:
         改变图片MD5
-    参数：
+    参数:
     :param path_file: 图片路径
     """
     try:

@@ -3,13 +3,15 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 
 from utils.manager import resources_manager
 from asyncio.exceptions import TimeoutError
+
+from utils.utils import get_bot
 from .model import BilibiliSub
 from bilireq.live import get_room_info_by_id
-from .utils import get_meta
+from .utils import get_meta, get_user_card
 from utils.message_builder import image
-from bilireq.user import get_user_info
+from bilireq.user import get_videos
+# from .utils import get_videos
 from bilireq import dynamic
-from .utils import get_videos
 from typing import Optional, Tuple
 from configs.path_config import IMAGE_PATH
 from datetime import datetime
@@ -37,36 +39,35 @@ async def add_live_sub(live_id: int, sub_user: str) -> str:
     :return:
     """
     try:
-        async with db.transaction():
-            try:
-                """bilibili_api.live库的LiveRoom类中get_room_info改为bilireq.live库的get_room_info_by_id方法"""
-                live_info = await get_room_info_by_id(live_id)
-            except ResponseCodeError:
-                return f"未找到房间号Id：{live_id} 的信息，请检查Id是否正确"
-            uid = live_info["uid"]
-            room_id = live_info["room_id"]
-            short_id = live_info["short_id"]
-            title = live_info["title"]
-            live_status = live_info["live_status"]
-            if await BilibiliSub.add_bilibili_sub(
-                room_id,
-                "live",
-                sub_user,
-                uid=uid,
-                live_short_id=short_id,
-                live_status=live_status,
-            ):
-                await _get_up_status(live_id)
-                uname = (await BilibiliSub.get_sub(live_id)).uname
-                return (
-                    "已成功订阅主播：\n"
-                    f"\ttitle：{title}\n"
-                    f"\tname： {uname}\n"
-                    f"\tlive_id：{live_id}\n"
-                    f"\tuid：{uid}"
+        try:
+            """bilibili_api.live库的LiveRoom类中get_room_info改为bilireq.live库的get_room_info_by_id方法"""
+            live_info = await get_room_info_by_id(live_id)
+        except ResponseCodeError:
+            return f"未找到房间号Id：{live_id} 的信息，请检查Id是否正确"
+        uid = live_info["uid"]
+        room_id = live_info["room_id"]
+        short_id = live_info["short_id"]
+        title = live_info["title"]
+        live_status = live_info["live_status"]
+        if await BilibiliSub.add_bilibili_sub(
+            room_id,
+            "live",
+            sub_user,
+            uid=uid,
+            live_short_id=short_id,
+            live_status=live_status,
+        ):
+            await _get_up_status(room_id)
+            uname = (await BilibiliSub.get_sub(room_id)).uname
+            return (
+                "已成功订阅主播：\n"
+                f"\ttitle：{title}\n"
+                f"\tname： {uname}\n"
+                f"\tlive_id：{room_id}\n"
+                f"\tuid：{uid}"
                 )
-            else:
-                return "添加订阅失败..."
+        else:
+            return "添加订阅失败..."
     except Exception as e:
         logger.error(f"订阅主播live_id：{live_id} 发生了错误 {type(e)}：{e}")
     return "添加订阅失败..."
@@ -82,7 +83,7 @@ async def add_up_sub(uid: int, sub_user: str) -> str:
         async with db.transaction():
             try:
                 """bilibili_api.user库中User类的get_user_info改为bilireq.user库的get_user_info方法"""
-                user_info = await get_user_info(uid)
+                user_info = await get_user_card(uid)
             except ResponseCodeError:
                 return f"未找到UpId：{uid} 的信息，请检查Id是否正确"
             uname = user_info["name"]
@@ -206,8 +207,10 @@ async def get_sub_status(id_: int, sub_type: str) -> Optional[str]:
             return await _get_up_status(id_)
         elif sub_type == "season":
             return await _get_season_status(id_)
-    except ResponseCodeError:
-        return f"Id：{id_} 获取信息失败...请检查订阅Id是否存在或稍后再试..."
+    except ResponseCodeError as msg:
+        logger.info(f"Id：{id_} 获取信息失败...{msg}")
+        return None
+        # return f"Id：{id_} 获取信息失败...请检查订阅Id是否存在或稍后再试..."
     # except Exception as e:
     #     logger.error(f"获取订阅状态发生预料之外的错误 id_：{id_} {type(e)}：{e}")
     #     return "发生了预料之外的错误..请稍后再试或联系管理员....."
@@ -229,6 +232,7 @@ async def _get_live_status(id_: int) -> Optional[str]:
         await BilibiliSub.update_sub_info(id_, live_status=live_status)
     if sub.live_status == 0 and live_status == 1:
         return (
+            f""
             f"{image(cover)}\n"
             f"{sub.uname} 开播啦！\n"
             f"标题：{title}\n"
@@ -240,34 +244,35 @@ async def _get_live_status(id_: int) -> Optional[str]:
 async def _get_up_status(id_: int) -> Optional[str]:
     """
     获取用户投稿状态
-    :param id_: 用户 id
+    :param id_: 订阅 id
     :return:
     """
     _user = await BilibiliSub.get_sub(id_)
     """bilibili_api.user库中User类的get_user_info改为bilireq.user库的get_user_info方法"""
-    user_info = await get_user_info(_user.uid)
+    user_info = await get_user_card(_user.uid)
     uname = user_info["name"]
     """bilibili_api.user库中User类的get_videos改为bilireq.user库的get_videos方法"""
-    video_info = await get_videos(id_)
+    video_info = await get_videos(_user.uid)
     latest_video_created = 0
     video = None
+    dividing_line = "\n-------------\n"
     if _user.uname != uname:
         await BilibiliSub.update_sub_info(id_, uname=uname)
-    dynamic_img, dynamic_upload_time = await get_user_dynamic(id_, _user)
+    dynamic_img, dynamic_upload_time, link = await get_user_dynamic(_user.uid, _user)
     if video_info["list"].get("vlist"):
         video = video_info["list"]["vlist"][0]
         latest_video_created = video["created"]
     rst = ""
     if dynamic_img:
         await BilibiliSub.update_sub_info(id_, dynamic_upload_time=dynamic_upload_time)
-        rst += f"{uname} 发布了动态！\n" f"{dynamic_img}\n"
+        rst += f"{uname} 发布了动态！\n" f"{dynamic_img}\n{link}"
     if (
         latest_video_created
         and _user.latest_video_created
         and video
         and _user.latest_video_created < latest_video_created
     ):
-        rst = rst + "-------------\n" if rst else rst
+        rst = rst + dividing_line if rst else rst
         await BilibiliSub.update_sub_info(
             id_, latest_video_created=latest_video_created
         )
@@ -278,7 +283,7 @@ async def _get_up_status(id_: int) -> Optional[str]:
             f'Bvid：{video["bvid"]}\n'
             f'直链：https://www.bilibili.com/video/{video["bvid"]}'
         )
-    rst = None if rst == "-------------\n" else rst
+    rst = None if rst == dividing_line else rst
     return rst
 
 
@@ -306,7 +311,7 @@ async def _get_season_status(id_) -> Optional[str]:
 
 async def get_user_dynamic(
     uid: int, local_user: BilibiliSub
-) -> Tuple[Optional[MessageSegment], int]:
+) -> Tuple[Optional[MessageSegment], int, str]:
     """
     获取用户动态
     :param uid: 用户uid
@@ -344,16 +349,8 @@ async def get_user_dynamic(
                 await page.set_viewport_size(
                     {"width": 2560, "height": 1080, "timeout": 10000 * 20}
                 )
-                await page.wait_for_selector(".panel-area")
-                await page.evaluate(
-                    """
-                    xs = document.getElementById('internationalHeader');
-                    xs.remove();
-                    xs = document.getElementsByClassName('panel-area')
-                    xs[0].remove();
-                """
-                )
-                card = page.locator(".detail-card")
+                await page.wait_for_selector(".bili-dyn-item__main")
+                card = page.locator(".bili-dyn-item__main")
                 await card.wait_for()
                 await card.screenshot(
                     path=dynamic_path / f"{local_user.sub_id}_{dynamic_upload_time}.jpg",
@@ -369,8 +366,9 @@ async def get_user_dynamic(
                     "bilibili_sub/dynamic",
                 ),
                 dynamic_upload_time,
+                f"https://t.bilibili.com/{dynamic_id}"
             )
-    return None, 0
+    return None, 0, ''
 
 
 class SubManager:
