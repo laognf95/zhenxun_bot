@@ -13,7 +13,9 @@
 
 如果该项目的图片等等侵犯猫豆腐老师权益请联系我删除！  
 
-如果希望有个地方讨论绪山真寻Bot，或者有问题或建议，可以发送issues或加入[ <strong>[是真寻酱哒](https://jq.qq.com/?_wv=1027&k=u8PgBkMZ) </strong>]
+是新手！希望有个地方讨论绪山真寻Bot，或者有问题或建议，可以发送issues或加入[ <strong>[是真寻酱哒(萌新版)](https://jq.qq.com/?_wv=1027&k=u8PgBkMZ) </strong>]
+
+[//]: # (是老手！讨论插件开发，nonebot2开发，可以加入[ <strong>[真寻酱的技术群]&#40;https://jq.qq.com/?_wv=1027&k=u8PgBkMZ&#41; </strong>])
 
 ## 声明
 此项目仅用于学习交流，请勿用于非法用途
@@ -128,7 +130,7 @@
 - [x] 移动图片  （同上）
 - [x] 删除图片  （同上）
 - [x] 群内B站订阅
-- [x] 群词条
+- [x] 词条设置
 - [x] 休息吧/醒来
 
 ### 已实现的超级用户功能
@@ -245,54 +247,73 @@ __Docker 全量版（包含 真寻Bot PostgreSQL数据库 go-cqhttp webui等）_
 **点击上方的 GitHub 徽标查看教程**  
 PS: **ARM平台** 请使用全量版 同时 **如果你的机器 RAM < 1G 可能无法正常启动全量版容器**
 
+## [爱发电](https://afdian.net/@HibiKier)
+<details>
+<summary>爱发电 以及 感谢投喂 </summary>
+<img width="365px" height="450px" src="https://user-images.githubusercontent.com/45528451/175059389-cfeb8174-fa07-4939-80ab-a039087a50f6.png">
+
+### 感谢名单
+(可以告诉我你的 __github__ 地址，我偷偷换掉0v|)  
+[Kafka](https://afdian.net/u/41d66798ef6911ecbc5952540025c377)
+[墨然](https://afdian.net/u/8aa5874a644d11eb8a6752540025c377)
+[爱发电用户_T9e4](https://afdian.net/u/2ad1bb82f3a711eca22852540025c377)
+[笑柒XIAO_Q7](https://afdian.net/u/4696db5c529111ec84ea52540025c377)
+[noahzark](https://afdian.net/a/noahzark)
+[腊条](https://afdian.net/u/f739c4d69eca11eba94b52540025c377)  
+[ze roller](https://afdian.net/u/0e599e96257211ed805152540025c377)  
+[爱发电用户_4jrf](https://afdian.net/u/6b2cdcc817c611ed949152540025c377)  
+[爱发电用户_TBsd](https://afdian.net/u/db638b60217911ed9efd52540025c377)  
+[烟寒若雨](https://afdian.net/u/067bd2161eec11eda62b52540025c377)  
+[ln](https://afdian.net/u/b51914ba1c6611ed8a4e52540025c377)  
+[爱发电用户_b9S4](https://afdian.net/u/3d8f30581a2911edba6d52540025c377)  
+[爱发电用户_c58s](https://afdian.net/u/a6ad8dda195e11ed9a4152540025c377)  
+[爱发电用户_eNr9](https://afdian.net/u/05fdb41c0c9a11ed814952540025c377)   
+[MangataAkihi](https://github.com/Sakuracio)   
+[炀](https://afdian.net/u/69b76e9ec77b11ec874f52540025c377)   
+[爱发电用户_Bc6j](https://afdian.net/u/8546be24f44111eca64052540025c377)   1114
+[大魔王](https://github.com/xipesoy)   
+[CopilotLaLaLa](https://github.com/CopilotLaLaLa)  
+[嘿小欧](https://afdian.net/u/daa4bec4f24911ec82e552540025c377)   
+[回忆的秋千](https://afdian.net/u/e315d9c6f14f11ecbeef52540025c377)  
+[十年くん](https://github.com/shinianj)
+[哇](https://afdian.net/u/9b266244f23911eca19052540025c377)  
+[yajiwa](https://github.com/yajiwa)  
+[爆金币](https://afdian.net/u/0d78879ef23711ecb22452540025c377)  
+
+
+</details>
+
+
 ## 更新
-
-### 2022/7/31
-
-* 对nonebot.beta4中PluginMeta进行解析
-* 修改webui元祖类型无法正确转换类型
-* 查看订阅以图片形式发送
-* 修复pix无图时不会提醒而是出错
-
-### 2022/7/30
-
-* 替换了cos和bt的url [@pull/951](https://github.com/HibiKier/zhenxun_bot/pull/951)
-* 发言记录统计添加日消息统计 [@pull/953](https://github.com/HibiKier/zhenxun_bot/pull/953)
-
-### 2022/7/24
 
 * 订阅up动态提供直链
 
-### 2022/7/23
+* 修复b站订阅 [@pull/1112](https://github.com/HibiKier/zhenxun_bot/pull/1112)
+* fix: 重载赛马娘卡池失败 [@pull/1114](https://github.com/HibiKier/zhenxun_bot/pull/1114)
 
-* 优化开箱次数判断
+### 2022/9/19
 
-### 2022/7/16
+* 更换bilibili_sub获取用户昵称用的API&尝试修了一下get_video() [@pull/1097](https://github.com/HibiKier/zhenxun_bot/pull/1097)
+* 修复csgo每日开箱可以多开一次
 
-* cos提供连发命令
-* 修复B站视频解析中b23解析错误
+### 2022/9/18
 
-### 2022/7/13
+* 修复 bilireq 版本过低导致 B 站视频解析错误 [@pull/1090](https://github.com/HibiKier/zhenxun_bot/pull/1096)
 
-* B站订阅提供配置项`LIVE_MSG_AT_ALL`,`UP_MSG_AT_ALL`：控制UP动态投稿和直播是否AT全体
-* 修改了Omega图库检测的数据库文件名
-* game_utils提供了Game类
+### 2022/9/16
 
-### 2022/7/7
+* fix: bilibili_sub, azur_draw_card [@pull/1090](https://github.com/HibiKier/zhenxun_bot/pull/1090)
+* 修复原神资源查询查询完毕后图片存储错误
+* b站订阅发送 与 b站订阅 使用相同开关，即：关闭b站订阅
 
-* 微博热搜选择单条热搜时也会检测时效性 [@pull/891](https://github.com/HibiKier/zhenxun_bot/pull/891)
+### 2022/9/10
 
-### 2022/7/7
+* 自定义群欢迎消息参数不完全时提示报错
+* 修改bt插件的url地址 [@pull/1067](https://github.com/HibiKier/zhenxun_bot/pull/1067)
 
-* 微博热搜选择单条热搜时也会检测时效性 [@pull/891](https://github.com/HibiKier/zhenxun_bot/pull/891)
+### 2022/9/8
 
-### 2022/7/4
-
-* 修复商品未设置限购时无法购买
-* 修复B站订阅UP动态 [@pull/886](https://github.com/HibiKier/zhenxun_bot/pull/886)
-* 修复色图命令带tag时配置项`MAX_ONCE_NUM2FORWARD`无法生效
-
-### 2022/7/3 \[v0.1.6.1]
+* 添加插件数据初始化判断
 
 * BagUser提供方法`check_props`方法，用于判断用户是否含有该道具并是否使用
 * 优化商品显示图片，提供限制，限购，折扣提示
@@ -422,320 +443,30 @@ PS: **ARM平台** 请使用全量版 同时 **如果你的机器 RAM < 1G 可能
 * 修改翻译插件，添加缺失的冒号 [@pull/602](https://github.com/HibiKier/zhenxun_bot/pull/602)
 * 修复碧蓝航线/明日方舟up池解析出错的问题 [@pull/610](https://github.com/HibiKier/zhenxun_bot/pull/602)
 
-### 2022/5/24
+### 2022/8/14
 
-* fix: 修正了签到时日期时间的显示不补齐零的bug （符合日期时间表示法 ISO 8601）[@pull/600](https://github.com/HibiKier/zhenxun_bot/pull/600)
-* 更新"微博热搜"接口 [@pull/579](https://github.com/HibiKier/zhenxun_bot/pull/579)
-* refactor&fix(manager): modify argument [@pull/576](https://github.com/HibiKier/zhenxun_bot/pull/576)
-* 修复复读不能复读图片的问题 [@pull/573](https://github.com/HibiKier/zhenxun_bot/pull/573)
-* 修复抽卡插件：方舟抽卡的抽取和显示问题 [@pull/581](https://github.com/HibiKier/zhenxun_bot/pull/581)
+* 修复epic未获取到时间时出错
+* 修复订阅主播时动态获取的id是直播间id
 
-### 2022/5/23 \[v0.1.5.6]
+### 2022/8/8
 
-* 修复"清除已删除插件数据" [@pull/545](https://github.com/HibiKier/zhenxun_bot/pull/545)
-* 修复有置顶的up主B站动态获取失败 [@pull/552](https://github.com/HibiKier/zhenxun_bot/pull/552)
-* 添加pixiv搜图多关键词支持;修复p站搜图数量参数问题 [@pull/441](https://github.com/HibiKier/zhenxun_bot/pull/441)
-* 修复开箱更新价格错误传参
-* 修复pix无法正确查询uid
-* 新增色图插件添加配置项```ALLOW_GROUP_R18```：允许群聊中使用色图r
-* 新增PIX插件添加配置项```ALLOW_GROUP_SETU```：允许非超级用户使用-s参数
-* 新增PIX插件添加配置项```ALLOW_GROUP_R18```：允许非超级用户使用-r参数
+* 修复赛马娘重载卡池失败的问题 [@pull/969](https://github.com/HibiKier/zhenxun_bot/pull/969)
 
-### 2022/5/22 \[v0.1.5.4]
+### 2022/8/3
 
-* 使用action自动更新poetry.lock [@pull/515](https://github.com/HibiKier/zhenxun_bot/pull/515)
-* fix(bilibili_sub): card is None and timeout [@pull/516](https://github.com/HibiKier/zhenxun_bot/pull/516)
-* 修复了epic有时获取新免费游戏消息时获取不到图片
-* 修复好感度满时签到出错（虽然是不可能满的
-* 修复原神资源图标下载路径错误
-* 修复自动更新群组可能失败
+* 修复 bili动态链接在投稿视频时URL和分割线连在一起 [@pull/951](https://github.com/HibiKier/zhenxun_bot/pull/961)
+* 更新 Epic 免费游戏商城链接拼接规则 [@pull/957](https://github.com/HibiKier/zhenxun_bot/pull/957)
 
-### 2022/5/21
+### 2022/8/6
 
-* 修复搜番无结果时报错无正确反馈
-* 解锁了windows上无法使用playwright的限制
-* 修复p搜对应pid有多张图时出错，改为连续发送图片
-* 修复p搜对数字的错误判断
-* 修复添加商品折扣无法正确添加
-* 修复了bilibili订阅直播间订阅up名称不一致的问题
-* 修复原神玩家查询没开地图时报错
-* 最低priority修改为 999
-* 修复刷屏检测失效
-* 修复刷屏检测设置命令无法生效
-* 优化刷屏显示设置禁言时长显示，并改为分钟
-* 修复了多连开箱无法指定武器箱
-* 修复识番链接无法正确获取
-* 新增真寻入群时即刻刷新权限
-* 提高了微博热搜截图的等待时间
-
-### 2022/5/19
-
-* fix: mihoyo bbs api changed [@pull/357](https://github.com/HibiKier/zhenxun_bot/pull/357)
-* Add word_clouds [@pull/265](https://github.com/HibiKier/zhenxun_bot/pull/265)
-* Fix wrong live streamer name [@pull/284](https://github.com/HibiKier/zhenxun_bot/pull/284)
-
-### 2022/5/16
-
-* 词条支持图片和@问题 [@pull/160](https://github.com/HibiKier/zhenxun_bot/pull/160)
-
-### 2022/5/15
-
-* 修复了商店商品无法正确添加
-* 修复了多张色图无法正确发送
-
-### 2022/5/14
-
-* 修复B站动态生成失败的问题 [@pull/159](https://github.com/HibiKier/zhenxun_bot/pull/159)
-
-### 2022/5/11
-
-* fix: 更改p搜api，解决p搜无法使用的问题 [@pull/155](https://github.com/HibiKier/zhenxun_bot/pull/155)
-
-### 2022/5/9 \[v0.1.5.3]
-
-* 替换了疫情API
-* 修复了私聊.ban/.unban出错
-
-### 2022/5/5
-
-* 修改bilibili_sub插件在windows平台下报错 [@pull/153](https://github.com/HibiKier/zhenxun_bot/pull/153)
-
-### 2022/5/3 \[v0.1.5.2]
-
-* 商品使用函数可以添加特定参数，例如：user_id, group_id, ShopParam等以及自己提供的参数
-* 添加商品注册装饰器shop_register
-* 修复商品函数kwargs无法获取参数值
-
-
-### 2022/5/1
-
-* 删除了`group_last_chat`插件（该功能可由`chat_history`替代
-* 新增敏感词检测（全新反击系统，是时候重拳出击了
-
-### 2022/4/26
-
-* 修复了群白名单无法正确添加
-* 优化了管理员帮助图片，背景图层将位于最下层
-* 修复了树脂140时不断提醒（未测试
-* 新增了消息记录的消息排行
-* WebUI新增CPU，内存，磁盘监控
-* WebUI新增资源文件夹统计可视化
-
-### 2022/4/12
-
-* 修复b了命令私聊出错
-
-### 2022/4/10 \[v0.1.4.7]
-
-* 新增消息记录模块
-* 丰富处理请求操作提示
-* web ui新增配置项修改
-
-### 2022/4/9
-
-* fix: 更新问题，戳一戳图片路径问题 [@pull/144](https://github.com/HibiKier/zhenxun_bot/pull/144)
-
-### 2022/4/8
-
-* 修复原神玩家查询
-
-### 2022/4/6
-
-* update search_type [@pull/143](https://github.com/HibiKier/zhenxun_bot/pull/143)
-
-### 2022/4/5 \[v0.1.4.6]
-
-* 修复web修改插件后帮助图片生成错误
-
-### 2022/4/4 \[v0.1.4.5]
-
-* 替换了bt搜索URL
-* 优化使用playwright的相关代码
-* 原神玩家查询新增层岩巨渊探索
-* 修复原神便笺角色头像黑框
-* 修复同意群聊请求错误
-* 提供webui方面的api
-* 新增web-ui（前端简易管理页面插件）插件
-
-### 2022/3/21
-
-* 修复statistics_handle.py乱码
-
-### 2022/3/18 \[v0.1.4.4]
-
-* 修复戳一戳无法功能关闭与ban禁用
-* 新增图片搜索 search_image
-
-### 2022/3/7
-
-* 优化增删权限插件
-
-### 2022/3/6
-
-* 修复树脂提醒无法开启
-* 修复p搜图片路径错误
-
-### 2022/3/3 \[v0.1.4.3]
-
-* 修复手动同意群聊请求依旧退出
-
-### 2022/3/1 \[v0.1.4.2]
-
-* 0.1.4内容
-
-### 2022/2/27 \[v0.1.4.1]
-
-* 优化抽卡
-
-### 2022/2/25 \[v0.1.4]
-
-* PIX提供配置MAX_ONCE_NUM2FORWARD：当单次发送图片超过指定张数且在群聊时，将转为合并消息
-* 修复点歌无法正确发送
-* 修复我有一个朋友有时文本会包含CQ码
-* 修复群欢消息被动控制文本未删除 [@pull/124](https://github.com/HibiKier/zhenxun_bot/pull/124)
-* message_builder.image不再提供参数:abspath
-
-### 2022/2/23
-
-* 插件状态将从已加载插件模块中读取
-* 修复b站订阅插件订阅失败问题
-* 修复重启命令无法使用
-
-### 2022/2/21 \[v0.1.3.2]
-
-* 群权限为-1时，超级用户发送的命令依旧生效
-* 当群权限为-1时，被动技能也将不会发送
-* 修复功能开关，b站转发解析，复读 ignore无法使用
-* 修复色图下载文件名与路径错误
-* 修复被动技能提醒有时无法删除控制文本
-
-
-### 2022/2/20 \[v0.1.3.1]
-
-* 修复pix下载临时文件目录错误
-* 修复AI，天气，发送图片ignore导致无法使用
-* 修复纯文本被动技能提醒有时无法删除控制文本
-
-### 2022/2/19 \[v0.1.3] (nonebot beta2！)
-
-* 由于nonebot升级版本，提供更新建议（__该次升级将会导致nonebot.beta1以下的插件无法使用__
-  * 保证services，utils，configs，plugins，basic_plugins，文件夹均为最新
-  * 根目录有pyproject.toml与poetry.lock
-  * 执行命令：
-    * pip3 install poetry
-    * poetry install
-    * poetry shell
-    * playwright install chromium
-    * python3 bot.py
-
-
-* 适配nonebot.beta2
-* 删除图片搜索 nonebot_plugin_picsearcher
-* 替换cos api
-* 原神签到树脂提醒新增绑定群里，在某群绑定uid就会在某群发送提醒信息（有好友则私聊，需要重新绑定uid
-* 修改update_info.json
-* 修复原神资源查询下载数据失败时导致报错
-* 优化BuildImage.circle()锯齿问题 [@pull/109](https://github.com/HibiKier/zhenxun_bot/pull/109)
-* epic restful 替换 [@pull/119](https://github.com/HibiKier/zhenxun_bot/pull/119)
-* fix: 修复远古时期残留的epic推送问题 [@pull/122](https://github.com/HibiKier/zhenxun_bot/pull/122)
-
-### 2022/2/11
-
-* 修复pix不使用反代无法下载图片
-
-### 2022/2/10 \[v0.1.1]
-
-* 修复购买道具出错
-
-### 2022/2/9 \[v0.1]
-
-* 新增原神自动签到和手动签到
-* 新增原神树脂提醒
-* 新增手动重载Config.yaml命令以及重载配置定时任务（极少部分帮助或配置可能需要重启
-* 修改了发送本地图库的matcher，改为on_message
-* register_use可以通过返回值发送消息
-* 修复修改商品时限制时间出错
-* 修复超时商品依旧可以被购买
-
-### 2022/1/16 \[v0.0.9.0]
-
-* Ai提供文本敏感词过滤器
-* 疫情插件适配新版腾讯API
-* 修复/t回复带空格切分
-* 修复原神玩家查询缺少渊下宫和稻妻家园以及角色不完全
-* 修复方法 text2image 中 padding 和 font 无法对纯文本生效
-* 修复签到图片中信息并未使用配置文件中的色图概率
-* 修改原神大地图合成方式，改为先压缩再合成
-* bag_user弃用字段props（该字段会在下次更新删除），使用新字段property
-* 数据库中所有belonging_group统一修改为group_id
-* 商店将registered_use和register_goods更名为register_use何register_goods
-* 商品注册提供了kwargs参数提供：
-    * bot 
-    * event
-    * 特殊字段
-      * “send_success_msg”(发送成功的交互信息->即：使用道具 {name} {num} 次成功)
-      * “_max_num_limit”(该道具单次使用的最多个数，默认1)
-
-### 2022/1/5 \[v0.0.8.2]
-
-* 提供金币消费hook，可在plugins2settings.yaml中配置该功能需要消费的金币
-* 商店插件将作为内置插件移动至basic_plugins
-* 商店插件通过export提供了方法，不需要修改商店插件代码添加商品数据和生效方法
-* 修改了hook插件顺序，主要以auth_hook为主
-* 修改商店图片样式
-* 取消每次启动更新城市列表（首次除外），采用定时更新，加快bot启动速度
-* 取消每次启动时截取今日素材，采用调用时截取保存，加快bot启动速度
-* 更新色图时当图片404时会删除并替换
-* 疫情消息回复改为图片
-* 修复商店折扣和限时时间无法生效
-* 修复原神玩家查询尘歌壶缺少图片
-
-### 2021/12/26
-
-* 修复群词条问题 空格 会被录入导致不断回复
-* 修复米游社app替换api导致无法正常查询
-
-### 2021/12/24
-
-* 支持国际疫情数据查询 [@pull/99](https://github.com/HibiKier/zhenxun_bot/pull/99)
-
-### 2021/12/20
-
-* 只有发布小于存储时间的新动态/视频的时候才获取并推送 [@pull/96](https://github.com/HibiKier/zhenxun_bot/pull/96)
-
-### 2021/12/16 \[v0.0.7.0]
-
-* 提供了真寻群聊功能总开关和对应默认配置项，命令：休息吧 醒来
-* 新增原神玩家查询，原神便笺查询
-* 群功能管理提供全部开启/关闭命令：开启/关闭全部功能
-* 提供主要数据自动备份，且提供自定义配置项
-* 提供命令：关于，用于介绍Bot之类的
-* 新增命令exec，用于执行sql语句
-* 签到提供参数 "all"，用于签到所有群聊
-* Ban提醒提供cd
-* 本地图库提供配置项SHOW_ID，用于设置发送图片时是否显示id
-* 色图和PIX提供配置项SHOW_INFO，用于设置发送图片时是否显示图片信息
-* 所有被动技能提供了进群默认状态配置项
-* 修复添加权限第二种添加形式无法正确添加正确的权限
-* 修复签到获取好感度卡时金币不会增加
-* 修复当红包数量不合法时依旧扣除金币
-* 修复金币红包再次使用塞红包时无法正确退回上次未开完的金币
-* 修复 滴滴滴- 只包含图片时不会发送至管理员
-* 修复添加权限等级错误
-* 修复群词条以bot名称为开头时无法正确触发
-* 修改了权限插件加载顺序防止小概率优先加载权限插件引起报错
-* 本地图库新图库会统一建立在resource/img/image_management文件夹下，如果该文件夹内未找到图库，会从上级目录查找（即：resource/img/）
+* 修复了原神自动签到返回invalid request的问题，新增查看我的cookie命令 [@pull/971](https://github.com/HibiKier/zhenxun_bot/pull/971)
 
 <br>
 
 __..... 更多更新信息请查看文档__
 
 ## Todo
-- [ ] web管理
-
-## 爱发电
-
-<img width="365px" height="450px" src="https://user-images.githubusercontent.com/45528451/175059389-cfeb8174-fa07-4939-80ab-a039087a50f6.png">
+- [x] web管理
 
 ## 感谢
 [botuniverse / onebot](https://github.com/botuniverse/onebot) ：超棒的机器人协议  
