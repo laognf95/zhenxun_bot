@@ -85,7 +85,7 @@ async def _(bot: Bot, event: MessageEvent):
                     "group_name"
                 ]
                 await switch_rule_matcher.send(
-                    f"已禁用群聊 {group_name}({block_type}) 的 {_cmd[2:]} 功能"
+                    f"已{_cmd[:2]}群聊 {group_name}({block_type}) 的 {_cmd[2:]} 功能"
                 )
             elif block_type in ["all", "private", "group", "a", "p", "g"]:
                 block_type = "all" if block_type == "a" else block_type
@@ -110,7 +110,7 @@ async def _():
 
 @group_task_status.handle()
 async def _(event: GroupMessageEvent):
-    await group_task_status.send(await group_current_status(event.group_id))
+    await group_task_status.send(group_current_status(event.group_id))
 
 
 @group_status.handle()
