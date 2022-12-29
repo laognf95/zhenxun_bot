@@ -33,7 +33,10 @@
 请对真寻说: '真寻帮助' or '管理员帮助' or '超级用户帮助' or '真寻帮助 指令'
 
 ## 普通帮助图片
-![x](https://github.com/HibiKier/zhenxun_bot/blob/0.0.8.2/docs_image/3238573864-836268675-E2FFBB2AC143EAF4DDDF150438508721.png)
+![x](https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/docs_image/help.png)
+
+## HTML版帮助图片
+![x](https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/docs_image/html_help.png)
 
 ## Web UI
 [zhenxun_bot_webui](https://github.com/HibiKier/zhenxun_bot_webui)
@@ -295,6 +298,39 @@ PS: **ARM平台** 请使用全量版 同时 **如果你的机器 RAM < 1G 可能
 
 
 ## 更新
+
+### 2022/12/27 \[v0.1.6.6]
+
+* 添加权限检查依赖注入
+
+### 2022/12/26
+
+* 优化`gamedraw`插件
+* 提供全局被动控制
+* 群被动状态改为图片
+* 修复epic获取到的简介不是中文的bug [@pull/1221](https://github.com/HibiKier/zhenxun_bot/pull/1221)
+
+## 2022/12/24
+
+* 修复群管理员权限检测会阻挡超级用户权限
+
+### 2022/12/23
+
+* 优化`管理员帮助`，`超级用户帮助`图片
+* 重新移植`gamedraw`
+* 修复pil帮助私聊时无法生成
+
+### 2022/12/17
+
+* 修复查看插件仓库当已安装插件版本不一致时出错
+
+### 2022/12/15
+
+* 修复自定义群欢迎消息无法使用
+
+### 2022/12/13
+
+* 修复.unban
 
 ### 2022/12/12
 
