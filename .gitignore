@@ -140,7 +140,6 @@ cython_debug/
 
 demo.py
 test.py
-test.test
 server_ip.py
 member_activity_handle.py
 Yu-Gi-Oh/
@@ -164,7 +163,9 @@ configs/config.yaml
 ./.env.dev
 plugins/csgo_server/
 plugins/activity/
-
+!/resources/image/genshin/alc/back.png
+!/data/genshin_alc/
+.vscode/launch.json
 restart.sh
 yarn.lock
 zhenxun_bot_webui-main/
