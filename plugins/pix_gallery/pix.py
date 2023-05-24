@@ -8,7 +8,7 @@ from configs.config import Config
 from services.log import logger
 from utils.manager import withdraw_message_manager
 from utils.message_builder import custom_forward_msg, image
-from utils.utils import is_number
+from utils.utils import is_number, change_pixiv_image_links
 
 from ._data_source import get_image
 from ._model.omega_pixiv_illusts import OmegaPixivIllusts
