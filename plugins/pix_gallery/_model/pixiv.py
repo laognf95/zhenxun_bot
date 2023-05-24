@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from typing import Optional, List
-from services.db_context import db
 from configs.config import Config
-=======
 from typing import List, Optional, Tuple
 
 from tortoise import fields
@@ -10,7 +6,6 @@ from tortoise.contrib.postgres.functions import Random
 
 from services.db_context import Model
 
->>>>>>> main
 
 class Pixiv(Model):
 
@@ -54,10 +49,7 @@ class Pixiv(Model):
         pid: Optional[int] = None,
         r18: Optional[int] = 0,
         num: int = 100,
-<<<<<<< HEAD
         spuser = True
-=======
->>>>>>> main
     ) -> List[Optional["Pixiv"]]:
         """
         说明:
@@ -69,26 +61,22 @@ class Pixiv(Model):
             :param r18: 是否r18，0：非r18  1：r18  2：混合
             :param num: 查找图片的数量
         """
-<<<<<<< HEAD
         spkw=Config.get_config("pix", "SP_KEY_WORD")
-=======
+
         if not num:
             return []
         query = cls
->>>>>>> main
+
         if r18 == 0:
             query = query.filter(is_r18=False)
         elif r18 == 1:
             query = query.filter(is_r18=True)
         if keywords:
             for keyword in keywords:
-<<<<<<< HEAD
-                query = query.where(cls.tags.contains(keyword))
+                query = query.filter(tags__contains=keyword)
         if spkw and not spuser:
             query = query.where(cls.tags.notlike(rf'%{spkw}%'))
-=======
-                query = query.filter(tags__contains=keyword)
->>>>>>> main
+
         elif uid:
             query = query.filter(uid=uid)
         elif pid:
