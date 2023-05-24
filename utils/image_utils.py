@@ -160,6 +160,7 @@ class BuildImage:
         h: int,
         paste_image_width: int = 0,
         paste_image_height: int = 0,
+        paste_space: int = 0,
         color: Union[str, Tuple[int, int, int], Tuple[int, int, int, int]] = None,
         image_mode: ModeType = "RGBA",
         font_size: int = 10,
@@ -177,6 +178,7 @@ class BuildImage:
             :param h: 自定义图片的高度，h=0时为图片原本高度
             :param paste_image_width: 当图片做为背景图时，设置贴图的宽度，用于贴图自动换行
             :param paste_image_height: 当图片做为背景图时，设置贴图的高度，用于贴图自动换行
+            :param paste_space: 自动贴图间隔
             :param color: 生成图片的颜色
             :param image_mode: 图片的类型
             :param font_size: 文字大小
@@ -190,6 +192,7 @@ class BuildImage:
         self.h = int(h)
         self.paste_image_width = int(paste_image_width)
         self.paste_image_height = int(paste_image_height)
+        self.paste_space = int(paste_space)
         self._current_w = 0
         self._current_h = 0
         self.uid = uuid.uuid1()
@@ -277,7 +280,9 @@ class BuildImage:
             :param center_type: 居中类型，可能的值 center: 完全居中，by_width: 水平居中，by_height: 垂直居中
             :param allow_negative: 允许使用负数作为坐标且不超出图片范围，从右侧开始计算
         """
-        await self.loop.run_in_executor(None, self.paste, img, pos, alpha, center_type, allow_negative)
+        await self.loop.run_in_executor(
+            None, self.paste, img, pos, alpha, center_type, allow_negative
+        )
 
     def paste(
         self,
@@ -324,7 +329,7 @@ class BuildImage:
             img = img.markImg
         if self._current_w >= self.w:
             self._current_w = 0
-            self._current_h += self.paste_image_height
+            self._current_h += self.paste_image_height + self.paste_space
         if not pos:
             pos = (self._current_w, self._current_h)
         if alpha:
@@ -335,7 +340,7 @@ class BuildImage:
                 self.markImg.paste(img, pos, img)
         else:
             self.markImg.paste(img, pos)
-        self._current_w += self.paste_image_width
+        self._current_w += self.paste_image_width + self.paste_space
 
     @classmethod
     def get_text_size(cls, msg: str, font: str, font_size: int) -> Tuple[int, int]:
@@ -469,7 +474,7 @@ class BuildImage:
                     "center_type must be 'center', 'by_width' or 'by_height'"
                 )
             w, h = self.w, self.h
-            longgest_text = ''
+            longgest_text = ""
             sentence = text.split("\n")
             for x in sentence:
                 longgest_text = x if len(x) > len(longgest_text) else longgest_text
@@ -953,6 +958,7 @@ class BuildMat:
         y_name: Optional[str] = None,
         x_index: List[Union[str, int, float]] = None,
         y_index: List[Union[str, int, float]] = None,
+        x_min_spacing: Optional[int] = None,
         x_rotate: int = 0,
         title: Optional[str] = None,
         size: Tuple[int, int] = (1000, 1000),
@@ -974,6 +980,7 @@ class BuildMat:
             :param y_name: 纵坐标名称
             :param x_index: 横坐标值
             :param y_index: 纵坐标值
+            :param x_min_spacing: x轴最小间距
             :param x_rotate: 横坐标旋转角度
             :param title: 标题
             :param size: 图像大小，建议默认
@@ -995,6 +1002,7 @@ class BuildMat:
         self.y_name = y_name
         self.x_index = x_index
         self.y_index = y_index
+        self.x_min_spacing = x_min_spacing
         self.x_rotate = x_rotate
         self.title = title
         self.font = font
@@ -1025,7 +1033,10 @@ class BuildMat:
             ]
         if not x_index:
             raise ValueError("缺少 x_index [横坐标值]...")
-        self._x_interval = int((self.line_length - 70) / len(x_index))
+        if x_min_spacing:
+            self._x_interval = x_min_spacing
+        else:
+            self._x_interval = int((self.line_length - 70) / len(x_index))
         self._bar_width = int(30 * (1 - (len(x_index) + 10) / 100))
         # 没有 y_index 时自动生成
         if not y_index:
@@ -1176,7 +1187,7 @@ class BuildMat:
             :param y: 坐标点
             :param display_num: 显示该点的值
         """
-        _black_point = BuildImage(7, 7, color=random.choice(self.bar_color))
+        _black_point = BuildImage(11, 11, color=random.choice(self.bar_color))
         _black_point.circle()
         x_interval = self._x_interval
         current_w = self.padding_w + x_interval
@@ -1191,14 +1202,6 @@ class BuildMat:
                     ),
                     f"{y[i]:.2f}" if isinstance(y[i], float) else f"{y[i]}",
                 )
-            self.markImg.paste(
-                _black_point,
-                (
-                    current_w - 3,
-                    current_h - int(y[i] * self._p * self._deviation) - 3,
-                ),
-                True,
-            )
             if i != len(y) - 1:
                 self.markImg.line(
                     (
@@ -1210,6 +1213,14 @@ class BuildMat:
                     fill=(0, 0, 0),
                     width=2,
                 )
+            self.markImg.paste(
+                _black_point,
+                (
+                    current_w - 3,
+                    current_h - int(y[i] * self._p * self._deviation) - 3,
+                ),
+                True,
+            )
             current_w += x_interval
 
     def _gen_bar_graph(
@@ -1314,6 +1325,11 @@ class BuildMat:
         padding_h = self.padding_h
         line_length = self.line_length
         background = random.choice(self.background) if self.background else None
+        if self.x_min_spacing:
+            length = (len(self.x_index) + 1) * self.x_min_spacing
+            if 2 * padding_w + length > self.w:
+                self.w = 2 * padding_w + length
+            background = None
         A = BuildImage(
             self.w, self.h, font_size=font_size, font=self.font, background=background
         )
@@ -1336,7 +1352,7 @@ class BuildMat:
             (
                 padding_w,
                 padding_h + line_length,
-                padding_w + line_length,
+                self.w - padding_w,
                 padding_h + line_length,
             ),
             (0, 0, 0),

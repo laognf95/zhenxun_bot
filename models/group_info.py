@@ -8,7 +8,7 @@ from services.log import logger
 
 class GroupInfo(Model):
 
-    group_id = fields.BigIntField(pk=True)
+    group_id = fields.CharField(255, pk=True)
     """群聊id"""
     group_name = fields.TextField(default="")
     """群聊名称"""
@@ -22,3 +22,10 @@ class GroupInfo(Model):
     class Meta:
         table = "group_info"
         table_description = "群聊信息表"
+
+    @classmethod
+    def _run_script(cls):
+        return ["ALTER TABLE group_info ADD group_flag Integer NOT NULL DEFAULT 0;",  # group_info表添加一个group_flag
+                "ALTER TABLE group_info ALTER COLUMN group_id TYPE character varying(255);"
+                # 将group_id字段类型改为character varying(255)
+                ]

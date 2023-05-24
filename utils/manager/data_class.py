@@ -35,11 +35,11 @@ class StaticData(Generic[T]):
                     elif file.name.endswith("yaml"):
                         self._data = _yaml.load(f)
 
-    def set(self, key, value) -> NoReturn:
+    def set(self, key, value):
         self._data[key] = value
         self.save()
 
-    def set_module_data(self, module, key, value, auto_save: bool = True) -> NoReturn:
+    def set_module_data(self, module, key, value, auto_save: bool = True):
         if module in self._data.keys():
             self._data[module][key] = value
             if auto_save:
@@ -51,7 +51,7 @@ class StaticData(Generic[T]):
     def keys(self) -> List[str]:
         return self._data.keys()
 
-    def delete(self, key) -> NoReturn:
+    def delete(self, key):
         if self._data.get(key) is not None:
             del self._data[key]
 
@@ -67,18 +67,24 @@ class StaticData(Generic[T]):
                 temp[k] = copy.deepcopy(v)
         return temp
 
-    def save(self, path: Union[str, Path] = None) -> NoReturn:
+    def save(self, path: Optional[Union[str, Path]] = None):
         path = path or self.file
         if isinstance(path, str):
             path = Path(path)
         if path:
             with open(path, "w", encoding="utf8") as f:
                 if path.name.endswith("yaml"):
-                    yaml.dump(self._data, f, indent=2, Dumper=yaml.RoundTripDumper, allow_unicode=True)
+                    yaml.dump(
+                        self._data,
+                        f,
+                        indent=2,
+                        Dumper=yaml.RoundTripDumper,
+                        allow_unicode=True,
+                    )
                 else:
                     json.dump(self.dict(), f, ensure_ascii=False, indent=4)
 
-    def reload(self) -> NoReturn:
+    def reload(self):
         if self.file.exists():
             if self.file.name.endswith("json"):
                 self._data: dict = json.load(open(self.file, "r", encoding="utf8"))
@@ -94,8 +100,11 @@ class StaticData(Generic[T]):
     def __str__(self) -> str:
         return str(self._data)
 
-    def __setitem__(self, key, value) -> NoReturn:
+    def __setitem__(self, key, value):
         self._data[key] = value
 
     def __getitem__(self, key) -> T:
         return self._data[key]
+
+    def __len__(self) -> int:
+        return len(self._data)

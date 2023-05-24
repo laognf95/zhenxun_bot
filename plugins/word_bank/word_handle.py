@@ -1,5 +1,5 @@
 import re
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import (
@@ -18,6 +18,7 @@ from nonebot.typing import T_State
 from configs.config import Config
 from configs.path_config import DATA_PATH
 from services.log import logger
+from utils.depends import AtList, ImageList
 from utils.message_builder import custom_forward_msg
 from utils.utils import get_message_at, get_message_img, is_number
 
@@ -34,6 +35,7 @@ usage：
     问题回答支持的CQ：at, face, image
     查看词条命令：群聊时为 群词条+全局词条，私聊时为 私聊词条+全局词条
     添加词条正则：添加词条(模糊|正则|图片)?问\s*?(\S*\s?\S*)\s*?答\s?(\S*)
+    正则问可以通过$1类推()捕获的组
     指令：
         添加词条 ?[模糊|正则|图片]问...答...：添加问答词条，可重复添加相同问题的不同回答
         删除词条 [问题/下标] ?[下标]：删除指定词条指定或全部回答
@@ -43,6 +45,7 @@ usage：
             [图片]...
         示例：添加词条@萝莉 我来啦
         示例：添加词条问谁是萝莉答是我
+        示例：添加词条正则问那个(.+)是萝莉答没错$1是萝莉
         示例：删除词条 谁是萝莉
         示例：删除词条 谁是萝莉 0
         示例：删除词条 id:0 1
@@ -100,6 +103,8 @@ async def _(
     event: MessageEvent,
     state: T_State,
     reg_group: Tuple[Any, ...] = RegexGroup(),
+    img_list: List[str] = ImageList(),
+    at_list: List[int] = AtList(),
 ):
     if (
         isinstance(event, PrivateMessageEvent)
@@ -117,35 +122,50 @@ async def _(
         await add_word.finish("权限不足，无法添加该范围词条")
     if (not problem or not problem.strip()) and word_type != "图片":
         await add_word.finish("词条问题不能为空！")
-    if (not answer or not answer.strip()) and not len(get_message_img(event.message)):
+    if (not answer or not answer.strip()) and not len(img_list) and not len(at_list):
         await add_word.finish("词条回答不能为空！")
     if word_type != "图片":
         state["problem_image"] = "YES"
     answer = event.message
     # 对at问题对额外处理
-    if get_message_at(event.message):
+    if at_list:
+        is_first = True
+        cur_p = None
+        answer = ""
+        problem = ""
         for index, seg in enumerate(event.message):
-            if seg.type == "text" and "答" in str(seg):
-                _problem = event.message[:index]
-                answer = event.message[index:]
-                answer[0] = str(answer[0])[str(answer[0]).index("答") + 1 :]
-                _problem[0] = str(_problem[0])[str(_problem[0]).index("问") + 1 :]
-                if (
-                    _problem[-1].type != "at"
-                    or seg.data["text"][: seg.data["text"].index("答")].lstrip()
-                ):
-                    _problem.append(seg.data["text"][: seg.data["text"].index("答")])
-                temp = ""
-                for g in _problem:
-                    if isinstance(g, str):
-                        temp += g
-                    elif g.type == "text":
-                        temp += g.data["text"]
-                    elif g.type == "at":
-                        temp += f"[at:{g.data['qq']}]"
-                problem = temp
-                break
-    problem = unescape(problem)
+            if seg.type == "text" and "添加词条问" in str(seg) and is_first:
+                is_first = False
+                seg_ = str(seg).split("添加词条问")[-1]
+                cur_p = "problem"
+                # 纯文本
+                if "答" in seg_:
+                    answer_index = seg_.index("答")
+                    problem = unescape(seg_[:answer_index]).strip()
+                    answer = unescape(seg_[answer_index + 1 :]).strip()
+                    cur_p = "answer"
+                else:
+                    problem = unescape(seg_)
+                continue
+            if cur_p == "problem":
+                if seg.type == "text" and "答" in str(seg):
+                    seg_ = str(seg)
+                    answer_index = seg_.index("答")
+                    problem += seg_[:answer_index]
+                    answer += seg_[answer_index + 1 :]
+                    cur_p = "answer"
+                else:
+                    if seg.type == "at":
+                        problem += f"[at:{seg.data['qq']}]"
+                    else:
+                        problem += (
+                            unescape(str(seg)).strip() if seg.type == "text" else seg
+                        )
+            else:
+                if seg.type == "text":
+                    answer += unescape(str(seg))
+                else:
+                    answer += seg
     event.message[0] = event.message[0].data["text"].split("答", maxsplit=1)[-1].strip()
     state["word_scope"] = word_scope
     state["word_type"] = word_type
@@ -164,7 +184,8 @@ async def _(
     problem_image: Message = Arg("problem_image"),
 ):
     try:
-        if word_type == "正则":
+        if word_type == "正则" and problem:
+            problem = unescape(problem)
             try:
                 re.compile(problem)
             except re.error:
@@ -175,11 +196,11 @@ async def _(
         if problem and bot.config.nickname:
             nickname = [nk for nk in bot.config.nickname if problem.startswith(nk)]
         await WordBank.add_problem_answer(
-            event.user_id,
-            event.group_id
+            str(event.user_id),
+            str(event.group_id)
             if isinstance(event, GroupMessageEvent)
             and (not word_scope or word_scope == "私聊")
-            else 0,
+            else "0",
             scope2int[word_scope] if word_scope else 1,
             type2int[word_type] if word_type else 0,
             problem or problem_image,
@@ -190,16 +211,16 @@ async def _(
         if isinstance(e, FinishedException):
             await add_word.finish()
         logger.error(
-            f"(USER {event.user_id}, GROUP "
-            f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'})"
-            f" 添加词条 {problem} 发生错误 {type(e)}: {e} "
+            f"添加词条 {problem} 错误...",
+            "添加词条",
+            event.user_id,
+            getattr(event, "group_id", None),
+            e=e,
         )
         await add_word.finish(f"添加词条 {problem} 发生错误！")
     await add_word.send("添加词条 " + (problem or problem_image) + " 成功！")
     logger.info(
-        f"(USER {event.user_id}, GROUP "
-        f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'})"
-        f" 添加词条 {problem} 成功！"
+        f"添加词条 {problem} 成功！", "添加词条", event.user_id, getattr(event, "group_id", None)
     )
 
 
@@ -207,9 +228,9 @@ async def _(
 async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
     if not (msg := arg.extract_plain_text().strip()):
         await delete_word_matcher.finish("此命令之后需要跟随指定词条，通过“显示词条“查看")
-    result = await delete_word(msg, event.group_id)
+    result = await delete_word(msg, str(event.group_id))
     await delete_word_matcher.send(result)
-    logger.info(f"(USER {event.user_id}, GROUP " f"{event.group_id})" f" 删除词条:" + msg)
+    logger.info(f"删除词条:" + msg, "删除词条", event.user_id, event.group_id)
 
 
 @delete_word_matcher.handle()
@@ -225,7 +246,7 @@ async def _(
         await delete_word_matcher.finish("此命令之后需要跟随指定词条，通过“显示词条“查看")
     result = await delete_word(msg, word_scope=2 if cmd[0] == "删除词条" else 0)
     await delete_word_matcher.send(result)
-    logger.info(f"(USER {event.user_id})" f" 删除词条:" + msg)
+    logger.info(f"删除词条:" + msg, "删除词条", event.user_id)
 
 
 @update_word_matcher.handle()
@@ -234,9 +255,9 @@ async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
         await update_word_matcher.finish("此命令之后需要跟随指定词条，通过“显示词条“查看")
     if len(msg.split()) < 2:
         await update_word_matcher.finish("此命令需要两个参数，请查看帮助")
-    result = await update_word(msg, event.group_id)
+    result = await update_word(msg, str(event.group_id))
     await update_word_matcher.send(result)
-    logger.info(f"(USER {event.user_id}, GROUP " f"{event.group_id})" f" 更新词条词条:" + msg)
+    logger.info(f"更新词条词条:" + msg, "更新词条", event.user_id, event.group_id)
 
 
 @update_word_matcher.handle()
@@ -254,7 +275,7 @@ async def _(
         await update_word_matcher.finish("此命令需要两个参数，请查看帮助")
     result = await update_word(msg, word_scope=2 if cmd[0] == "修改词条" else 0)
     await update_word_matcher.send(result)
-    logger.info(f"(USER {event.user_id})" f" 更新词条词条:" + msg)
+    logger.info(f"更新词条词条:" + msg, "更新词条", event.user_id)
 
 
 @show_word_matcher.handle()
@@ -267,7 +288,8 @@ async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
             if (
                 not is_number(id_)
                 or int(id_) < 0
-                or int(id_) >= len(await WordBank.get_group_all_problem(event.group_id))
+                or int(id_)
+                >= len(await WordBank.get_group_all_problem(str(event.group_id)))
             ):
                 await show_word_matcher.finish("id必须为数字且在范围内")
             id_ = int(id_)
@@ -280,9 +302,9 @@ async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
             ):
                 await show_word_matcher.finish("gid必须为数字且在范围内")
             gid = int(gid)
-        msg_list = await show_word(problem, id_, gid, None if gid else event.group_id)
+        msg_list = await show_word(problem, id_, gid, None if gid else str(event.group_id))
     else:
-        msg_list = await show_word(problem, None, None, event.group_id)
+        msg_list = await show_word(problem, None, None, str(event.group_id))
     if isinstance(msg_list, str):
         await show_word_matcher.send(msg_list)
     else:
@@ -290,9 +312,7 @@ async def _(bot: Bot, event: GroupMessageEvent, arg: Message = CommandArg()):
             group_id=event.group_id, messages=custom_forward_msg(msg_list, bot.self_id)
         )
     logger.info(
-        f"(USER {event.user_id}, GROUP "
-        f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'})"
-        f" 发送查看词条回答:" + problem
+        f"查看词条回答:" + problem, "显示词条", event.user_id, getattr(event, "group_id", None)
     )
 
 
@@ -331,4 +351,6 @@ async def _(event: PrivateMessageEvent, arg: Message = CommandArg()):
         for msg in msg_list:
             t += msg + "\n"
         await show_word_matcher.send(t[:-1])
-    logger.info(f"(USER {event.user_id}, GROUP " f"private)" f" 发送查看词条回答:" + problem)
+    logger.info(
+        f"查看词条回答:" + problem, "显示词条", event.user_id, getattr(event, "group_id", None)
+    )

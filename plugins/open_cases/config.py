@@ -1,4 +1,5 @@
 import random
+from enum import Enum
 from typing import List, Tuple
 
 from configs.path_config import IMAGE_PATH
@@ -32,6 +33,16 @@ WELL_WORN_E = 0.44999
 # 战痕
 BATTLE_SCARED_S = 0.45
 BATTLE_SCARED_E = 0.99999
+
+
+class UpdateType(Enum):
+
+    """
+    更新类型
+    """
+
+    CASE = "case"
+    WEAPON_TYPE = "weapon_type"
 
 
 NAME2COLOR = {
@@ -68,7 +79,40 @@ ABRASION_SORT = ["崭新出厂", "略有磨损", "久经沙场", "破损不堪",
 
 CASE_BACKGROUND = IMAGE_PATH / "csgo_cases" / "_background" / "shu"
 
+# 刀
+KNIFE2ID = {
+    "鲍伊猎刀": "weapon_knife_survival_bowie",
+    "蝴蝶刀": "weapon_knife_butterfly",
+    "弯刀": "weapon_knife_falchion",
+    "折叠刀": "weapon_knife_flip",
+    "穿肠刀": "weapon_knife_gut",
+    "猎杀者匕首": "weapon_knife_tactical",
+    "M9刺刀": "weapon_knife_m9_bayonet",
+    "刺刀": "weapon_bayonet",
+    "爪子刀": "weapon_knife_karambit",
+    "暗影双匕": "weapon_knife_push",
+    "短剑": "weapon_knife_stiletto",
+    "熊刀": "weapon_knife_ursus",
+    "折刀": "weapon_knife_gypsy_jackknife",
+    "锯齿爪刀": "weapon_knife_widowmaker",
+    "海豹短刀": "weapon_knife_css",
+    "系绳匕首": "weapon_knife_cord",
+    "求生匕首": "weapon_knife_canis",
+    "流浪者匕首": "weapon_knife_outdoor",
+    "骷髅匕首": "weapon_knife_skeleton",
+    "血猎手套": "weapon_bloodhound_gloves",
+    "驾驶手套": "weapon_driver_gloves",
+    "手部束带": "weapon_hand_wraps",
+    "摩托手套": "weapon_moto_gloves",
+    "专业手套": "weapon_specialist_gloves",
+    "运动手套": "weapon_sport_gloves",
+    "九头蛇手套": "weapon_hydra_gloves",
+    "狂牙手套": "weapon_brokenfang_gloves",
+}
 
+WEAPON2ID = {}
+
+# 武器箱
 CASE2ID = {
     "变革": "set_community_32",
     "反冲": "set_community_31",
@@ -87,12 +131,12 @@ CASE2ID = {
     "光谱2号": "set_community_18",
     "九头蛇大行动": "set_community_17",
     "光谱": "set_community_16",
-    "手套武器箱": "set_community_15",
+    "手套": "set_community_15",
     "伽玛2号": "set_gamma_2",
     "伽玛": "set_community_13",
     "幻彩3号": "set_community_12",
     "野火大行动": "set_community_11",
-    "左轮武器箱": "set_community_10",
+    "左轮": "set_community_10",
     "暗影": "set_community_9",
     "弯曲猎手": "set_community_8",
     "幻彩2号": "set_community_7",
@@ -167,6 +211,7 @@ async def random_skin(num: int, case_name: str) -> List[Tuple[BuffSkin, float]]:
     """
     随机抽取皮肤
     """
+    case_name = case_name.replace("武器箱", "").replace(" ", "")
     color_map = {}
     for _ in range(num):
         rand = random.random()
