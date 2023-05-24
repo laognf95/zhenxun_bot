@@ -379,7 +379,55 @@ def get_bk_image_size(
     extra_height: int = 0,
 ):
     """获取所需背景大小且不改变图片长宽比"""
+    bk_w, bk_h = base_size
+    img_w, img_h = img_size
+    is_add_title_size = False
+    left_dis = 0
+    right_dis = 0
+    old_size = (0, 0)
+    new_size = (0, 0)
+    ratio = 1.1
+    while 1:
+        w_ = int(ratio * bk_w)
+        h_ = int(ratio * bk_h)
+        size = w_ * h_
+        if size < total_size:
+            left_dis = size
+        else:
+            right_dis = size
+        r = w_ / (img_w + 25)
+        if right_dis and r - int(r) < 0.1:
+            if not is_add_title_size and extra_height:
+                total_size = int(total_size + w_ * extra_height)
+                is_add_title_size = True
+                right_dis = 0
+                continue
+            if total_size - left_dis > right_dis - total_size:
+                new_size = (w_, h_)
+            else:
+                new_size = old_size
+            break
+        old_size = (w_, h_)
+        ratio += 0.1
+    return new_size
 
+
+async def reset_count_daily():
+    """
+    重置每日开箱
+    """
+    try:
+        await OpenCasesUser.all().update(today_open_total=0)
+        await broadcast_group(
+            "[[_task|open_case_reset_remind]]今日开箱次数重置成功", log_cmd="开箱重置提醒"
+        )
+    except Exception as e:
+        logger.error(f"开箱重置错误", e=e)
+
+
+@driver.on_startup
+async def _():
+    await CaseManager.reload()
 
 async def util_get_buff_img(case_name: str = "狂牙大行动") -> str:
     cookie = {"session": Config.get_config("open_cases", "COOKIE")}
