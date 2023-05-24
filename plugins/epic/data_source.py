@@ -80,7 +80,7 @@ async def get_epic_free(bot: Bot, type_event: str):
                         data = {
                             "type": "node",
                             "data": {
-                                "name": f"这里是{NICKNAME}酱",
+                                "name": f"{NICKNAME}",
                                 "uin": f"{bot.self_id}",
                                 "content": _message,
                             },

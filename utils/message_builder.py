@@ -156,7 +156,7 @@ def music(type_: str, id_: int) -> MessageSegment:
 def custom_forward_msg(
     msg_list: List[Union[str, Message]],
     uin: Union[int, str],
-    name: str = f"这里是{NICKNAME}",
+    name: str = f"{NICKNAME}",
 ) -> List[dict]:
     """
     说明:
