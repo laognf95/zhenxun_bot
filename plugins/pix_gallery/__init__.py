@@ -52,10 +52,6 @@ Config.add_plugin_config(
 Config.add_plugin_config(
     "pix", "SHOW_INFO", True, help_="是否显示图片的基本信息，如PID等", default_value=True, type=bool
 )
-<<<<<<< HEAD
-Config.add_plugin_config(
-    "pix", "SHOW_INFO", True, help_="是否显示图片的基本信息，如PID等", default_value=True, type=bool
-)
 Config.add_plugin_config(
     "pix",
     "SP_KEY_WORD",

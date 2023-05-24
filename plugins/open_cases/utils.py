@@ -378,7 +378,7 @@ def get_bk_image_size(
     img_size: Tuple[int, int],
     extra_height: int = 0,
 ):
-    """获取所需背景大小且不改变图片长宽比
+    """获取所需背景大小且不改变图片长宽比"""
 
 
 async def util_get_buff_img(case_name: str = "狂牙大行动") -> str:
