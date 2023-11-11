@@ -5,7 +5,7 @@ from services.log import logger
 from configs.config import NICKNAME
 import random
 import asyncio
-
+import re
 
 __zx_plugin_name__ = "roll"
 __plugin_usage__ = """
@@ -36,6 +36,19 @@ async def _(event: MessageEvent, arg: Message = CommandArg()):
     msg = arg.extract_plain_text().strip().split()
     if not msg:
         await roll.finish(f"roll: {random.randint(0, 100)}", at_sender=True)
+    if len(msg) == 1 and (res:=re.match(r"^(\d+)d(\d+)$", msg[0])):
+        c = int(res.group(1))
+        d = int(res.group(2))
+        if c < 1 or c > 10:
+            await roll.finish('骰子数量必须是1-10！')
+        if d < 2 or d > 100:
+            await roll.finish('骰子值必须是2-100！')
+            return
+        dres = []
+        for _ in range(c):
+            dres.append(random.randint(1,d))
+        await roll.finish(str(dres))
+
     user_name = event.sender.card or event.sender.nickname
     await roll.send(
         random.choice(
