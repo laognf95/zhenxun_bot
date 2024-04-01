@@ -291,6 +291,7 @@ async def _get_up_status(
             ).list
         except Exception as e:
             logger.error("获取动态失败...", target=id_, e=e)
+            return ""
         if dynamics:
             uname = dynamics[0].modules[0].module_author.author.name
             for dyn in dynamics:
