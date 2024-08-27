@@ -1,6 +1,7 @@
 import random
+import httpx
 
-from nonebot import on_command
+from nonebot import on_command, exception
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
 from nonebot.params import CommandArg
 
@@ -101,21 +102,21 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         nsfw_tag = 2
     else:
         nsfw_tag = 0
-    if nsfw_tag != 0:
-        # if isinstance(event, GroupMessageEvent):
-        #     flag = False
-        #     if await GROUP_ADMIN(bot, event):
-        #         flag = True
-        #     elif await GROUP_OWNER(bot, event):
-        #         flag = True
-        #     elif str(event.user_id) in bot.config.superusers:
-        #         flag = True
-        #     if not flag:
-        #         await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-        # elif str(event.user_id) not in bot.config.superusers:
-        #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
-        if str(event.user_id) not in bot.config.superusers:
-            await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+    # if nsfw_tag != 0:
+    #     # if isinstance(event, GroupMessageEvent):
+    #     #     flag = False
+    #     #     if await GROUP_ADMIN(bot, event):
+    #     #         flag = True
+    #     #     elif await GROUP_OWNER(bot, event):
+    #     #         flag = True
+    #     #     elif str(event.user_id) in bot.config.superusers:
+    #     #         flag = True
+    #     #     if not flag:
+    #     #         await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+    #     # elif str(event.user_id) not in bot.config.superusers:
+    #     #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
+    #     if str(event.user_id) not in bot.config.superusers:
+    #         await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
 
     # if nsfw_tag != 0 and str(event.user_id) not in bot.config.superusers:
     #     await pix.finish("你不能看这些噢，这些都是是留给管理员看的...")
@@ -196,19 +197,29 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
         except httpx.ConnectTimeout:
             await pix.finish("超时了...", at_sender=True)
         except httpx.RemoteProtocolError:
-            await pix.finish("服务器好像寄了...", at_sender=True)
+            await pix.send(
+                f"title：{title}\n"
+                f"author：{author}\n"
+                f"PID：{pid}\nUID：{uid}\n"
+                f"原图链接:{img_url}")
+            await pix.finish("服务器好像寄了...要不试试直接点原图链接？", at_sender=True)
+
         except httpx.ReadTimeout:
-            await pix.finish("服务器好像寄了...", at_sender=True)
+            await pix.send(
+                f"title：{title}\n"
+                f"author：{author}\n"
+                f"PID：{pid}\nUID：{uid}\n"
+                f"原图链接:{img_url}")
+            await pix.finish("服务器好像寄了...要不试试直接点原图链接？", at_sender=True)
         if _img:
             if Config.get_config("pix", "SHOW_INFO"):
-                o_url = change_pixiv_image_links(img_url, "original", Config.get_config("pixiv", "PIXIV_NGINX_URL"))
                 # print(o_url)
                 msg_list.append(
                     Message(
                         f"title：{title}\n"
                         f"author：{author}\n"
                         f"PID：{pid}\nUID：{uid}\n"
-                        f"原图链接:{o_url}"
+                        f"原图链接:{img_url}"
                         f"{image(_img)}"
                     )
                 )
@@ -225,8 +236,9 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 f" 查看PIX图库PID: {pid}，下载图片出错"
             )
     if (
-        Config.get_config("pix", "MAX_ONCE_NUM2FORWARD")
-        and num >= Config.get_config("pix", "MAX_ONCE_NUM2FORWARD")
+        ((Config.get_config("pix", "MAX_ONCE_NUM2FORWARD")
+        and num >= Config.get_config("pix", "MAX_ONCE_NUM2FORWARD"))
+        or nsfw_tag > 0)
         and isinstance(event, GroupMessageEvent)
     ):
         try:
@@ -244,7 +256,7 @@ async def _(bot: Bot, event: MessageEvent, arg: Message = CommandArg()):
                 msg_id = await pix.send(msg)
             except exception.ActionFailed:
                 await pix.send(f'pid:{pid}发送失败了...难道因为太色了？')
-                msg_id = await pix.send(f'要不试试直接点原图链接？\r{o_url}')
+                msg_id = await pix.send(f'要不试试直接点原图链接？\r{img_url}')
             withdraw_message_manager.withdraw_message(
                 event, msg_id, Config.get_config("pix", "WITHDRAW_PIX_MESSAGE")
             )

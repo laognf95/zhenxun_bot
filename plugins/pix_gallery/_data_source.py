@@ -221,14 +221,14 @@ async def get_image(img_url: str, user_id: int) -> Optional[str]:
             except TimeoutError:
                 pass
     old_img_url = img_url
-    img_url = change_pixiv_image_links(
-        img_url,
-        Config.get_config("pix", "PIX_IMAGE_SIZE"),
-        Config.get_config("pixiv", "PIXIV_NGINX_URL"),
-    )
-    old_img_url = change_pixiv_image_links(
-        old_img_url, None, Config.get_config("pixiv", "PIXIV_NGINX_URL")
-    )
+    # img_url = change_pixiv_image_links(
+    #     img_url,
+    #     Config.get_config("pix", "PIX_IMAGE_SIZE"),
+    #     Config.get_config("pixiv", "PIXIV_NGINX_URL"),
+    # )
+    # old_img_url = change_pixiv_image_links(
+    #     old_img_url, None, Config.get_config("pixiv", "PIXIV_NGINX_URL")
+    # )
     for _ in range(3):
         try:
             response = await AsyncHttpx.get(
