@@ -174,3 +174,5 @@ configs/
 data/
 node_modules/
 resources/
+
+disable_plugins
