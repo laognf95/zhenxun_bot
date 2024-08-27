@@ -290,7 +290,7 @@ async def _get_up_status(
                 await grpc_get_user_dynamics(int(id_), proxy=get_local_proxy())
             ).list
         except Exception as e:
-            logger.error("获取动态失败...", target=id_, e=e)
+            # logger.error("获取动态失败...", target=id_, e=e)
             return ""
         if dynamics:
             uname = dynamics[0].modules[0].module_author.author.name
