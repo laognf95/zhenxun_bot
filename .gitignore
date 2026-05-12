@@ -32,6 +32,7 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+!resources.spec
 
 # Installer logs
 pip-log.txt
@@ -113,6 +114,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env.dev
 
 # Spyder project settings
 .spyderproject
@@ -138,13 +140,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-demo.py
-test.py
-server_ip.py
-member_activity_handle.py
-Yu-Gi-Oh/
-csgo/
-fantasy_card/
 data/
 log/
 backup/
@@ -178,3 +173,8 @@ resources/
 disable_plugins
 
 *.bak
+.idea/
+resources/
+.vscode/launch.json
+
+./.env.dev
